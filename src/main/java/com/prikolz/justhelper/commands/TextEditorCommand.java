@@ -18,10 +18,10 @@ public class TextEditorCommand extends JustHelperCommand {
     public LiteralArgumentBuilder<ClientSuggestionProvider> create(LiteralArgumentBuilder<ClientSuggestionProvider> main) {
         return main.executes(context -> {
             var client = Minecraft.getInstance();
-            if (
-                    client.getConnection() == null || client.player == null ||
-                    !DevelopmentWorld.isActive() || !JustMCUtils.isTextValue(client.player.getMainHandItem())
-            ) return 0;
+            if (client.getConnection() == null || client.player == null) return 0;
+            if(!DevelopmentWorld.isActive() || !JustMCUtils.isTextValue(client.player.getMainHandItem())) {
+                return JustHelperCommand.feedback("<yellow>Доступно только в мире кода!");
+            }
 
             client.schedule(() ->
                     client.setScreen(TextEditorScreen.create(DevValueRegistry.fromItem(client.player.getMainHandItem())))

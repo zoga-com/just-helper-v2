@@ -20,8 +20,6 @@ import java.util.List;
 import static com.prikolz.justhelper.JustHelperClient.GSON;
 
 public class Config {
-    public static Config get() { return JustHelperClient.CONFIG; }
-
     public final List<Parameter<?, ?>> parameters = new ArrayList<>();
 
     public Parameter<CodeBlockNames, JsonObject> codeBlockNames = new Parameter<>(
@@ -113,6 +111,8 @@ public class Config {
                 return result;
             }
     );
+
+    public static Config get() { return JustHelperClient.CONFIG; }
 
     public List<String> read() {
         JustHelperClient.LOGGER.info("Reading config...");

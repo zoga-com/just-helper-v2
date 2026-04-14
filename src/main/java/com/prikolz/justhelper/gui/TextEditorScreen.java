@@ -35,8 +35,6 @@ public class TextEditorScreen extends Screen {
 
         var formatting = new StringWidget(currentFormat.getNameComponent(), minecraft.font);
         formatting.setPosition(20, height - 35);
-        var limit = new StringWidget(TextUtils.minimessage("<gray>" + this.currentContent.length() + "/25000"), minecraft.font);
-        limit.setPosition(width - 75, height - 35);
 
         var editBox =
                 MultiLineEditBox.builder()
@@ -44,11 +42,8 @@ public class TextEditorScreen extends Screen {
                 .setY(20)
                 .build(minecraft.font, this.width - 40, this.height - 60, Component.literal("Текст"));
         editBox.setValue(this.currentContent);
-        editBox.setValueListener((newValue) -> {
-            this.currentContent = newValue;
-            limit.setMessage(TextUtils.minimessage("<gray>" + this.currentContent.length() + "/25000"));
-        });
         editBox.setCharacterLimit(24999);
+        editBox.setValueListener((newValue) -> this.currentContent = newValue);
 
         var saveButton =
                 Button.builder(Component.translatable("gui.done"), (btn) -> {
@@ -72,7 +67,6 @@ public class TextEditorScreen extends Screen {
 
         addRenderableWidget(title);
         addRenderableWidget(editBox);
-        addRenderableWidget(limit);
         addRenderableWidget(formatting);
         addRenderableWidget(closeButton);
         addRenderableWidget(saveButton);

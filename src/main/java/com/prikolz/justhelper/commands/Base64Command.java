@@ -13,7 +13,6 @@ public class Base64Command extends JustHelperCommand {
 
     @Override
     public LiteralArgumentBuilder<ClientSuggestionProvider> create(LiteralArgumentBuilder<ClientSuggestionProvider> main) {
-
         var encode = new LineCommand("encode")
                 .arg("text", StringArgumentType.greedyString())
                 .run(context -> {

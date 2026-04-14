@@ -22,11 +22,11 @@ public class TextUtils {
     public static final Grammar<Tag> TAG_PARSER = SnbtGrammar.createParser(NbtOps.INSTANCE);
     public static final CommandArgumentParser<Component> PARSER = TAG_PARSER.withCodec(NbtOps.INSTANCE, TAG_PARSER, ComponentSerialization.CODEC, ERROR_INVALID_COMPONENT);
 
-    public static Component minimessage(String minimessage, Object ... placeholders) {
+    public static Component minimessage(String minimessage, Object... placeholders) {
         String message = handlePlaceholders(0, minimessage, placeholders);
-        var json = GsonComponentSerializer.gson().serialize( MiniMessage.miniMessage().deserialize(message) );
+        var json = GsonComponentSerializer.gson().serialize(MiniMessage.miniMessage().deserialize(message));
         try {
-            return PARSER.parseForCommands( new StringReader( json) );
+            return PARSER.parseForCommands(new StringReader(json));
         } catch (Throwable t) {
             JustHelperClient.LOGGER.error("Minimessage parse error: {}", t.getMessage());
         }
@@ -36,14 +36,14 @@ public class TextUtils {
     public static String toMiniMessage(Component component) {
         try {
             var json = ComponentSerialization.CODEC.encodeStart(JsonOps.INSTANCE, component).getOrThrow();
-            return MiniMessage.miniMessage().serialize( GsonComponentSerializer.gson().deserializeFromTree(json) );
+            return MiniMessage.miniMessage().serialize(GsonComponentSerializer.gson().deserializeFromTree(json));
         } catch (Throwable t) {
             JustHelperClient.LOGGER.error("Component to minimessage convert error: " + t.getMessage());
         }
         return "[ERROR | CHECK LOGS]";
     }
 
-    private static String handlePlaceholders(int calls, String string, Object ... placeholders) {
+    private static String handlePlaceholders(int calls, String string, Object... placeholders) {
         if (calls > 99) return string + "(Infinite recursion)";
         boolean hasPlaceholders = false;
         var builder = new StringBuilder();
@@ -54,7 +54,11 @@ public class TextUtils {
                 if (c == '}') {
                     openBracketMode = false;
                     int i;
-                    try { i = Integer.parseInt(numberReader.toString()); } catch (Throwable t) { i = -1; }
+                    try {
+                        i = Integer.parseInt(numberReader.toString());
+                    } catch (Throwable t) {
+                        i = -1;
+                    }
                     if (i >= placeholders.length || i < 0) {
                         builder.append('{').append(numberReader).append('}');
                         continue;
@@ -111,7 +115,7 @@ public class TextUtils {
     }
 
     public static String cut(String text, int length) {
-        if(text.length() <= length) return text;
+        if (text.length() <= length) return text;
         return text.substring(0, length) + "... (+" + (text.length() - length) + ")";
     }
 }
