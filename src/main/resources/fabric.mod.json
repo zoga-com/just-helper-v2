@@ -1,11 +1,11 @@
 {
 	"schemaVersion": 1,
-	"id": "just-helper",
+	"id": "jmcd",
 	"version": "${version}",
-	"name": "Just Helper",
+	"name": "JustMC Devtools",
 	"description": " ",
 	"authors": [
-		"2M3V"
+		"2M3V", "Zoga_com"
 	],
 	"contact": {
 		"homepage": "https://fabricmc.net/",
