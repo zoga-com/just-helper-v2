@@ -2,6 +2,7 @@ package com.prikolz.justhelper.dev;
 
 import com.prikolz.justhelper.Config;
 import com.prikolz.justhelper.DevelopmentWorld;
+import com.prikolz.justhelper.util.TextUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
@@ -9,7 +10,10 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.Style;
+
+import java.awt.*;
 
 public class DevRender {
     private final Font font = Minecraft.getInstance().font;
@@ -40,7 +44,6 @@ public class DevRender {
                         .append(Component.literal("/" + lines[1]).setStyle(Style.EMPTY.withColor(0xFFFFFF)));
             }
         }
-
     }
 
     public void render(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
@@ -54,6 +57,9 @@ public class DevRender {
 
     private void renderPosition(GuiGraphics guiGraphics) {
         int screenWidth = minecraft.getWindow().getGuiScaledWidth();
+
+        int boxSize = font.width(FormattedText.of(TextUtils.findLongestString(floorText, lineText, blockText)));
+        guiGraphics.fill(screenWidth - boxSize - 15, 2, screenWidth - 5, blockText.getString().isEmpty() ? 30 : 45, new Color(0, 0, 0, 125).getRGB());
 
         int textWidth = font.width(floorText);
         int x = screenWidth - textWidth - 10;

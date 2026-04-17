@@ -20,7 +20,7 @@ public class TextEditorCommand extends JustHelperCommand {
             var client = Minecraft.getInstance();
             if (client.getConnection() == null || client.player == null) return 0;
             if(!DevelopmentWorld.isActive() || !JustMCUtils.isTextValue(client.player.getMainHandItem())) {
-                return JustHelperCommand.feedback("<yellow>Доступно только в мире кода!");
+                return JustHelperCommand.feedback("<sprite:items:item/command_block_minecart><#FF6467> Доступно только в мире кода!");
             }
 
             client.schedule(() ->

@@ -5,12 +5,12 @@ import com.prikolz.justhelper.util.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.MultiLineEditBox;
 import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import ru.zoga_com.jmcd.widgets.TransparentButton;
 
 public class LogsScreen extends Screen {
     public LogsScreen() {
@@ -19,19 +19,20 @@ public class LogsScreen extends Screen {
 
     @Override
     protected void init() {
-        var title = new StringWidget(TextUtils.minimessage("<blue>Just<red>Helper <#FFFFBB>Logs"), minecraft.font);
+        var title = new StringWidget(TextUtils.minimessage("<#FFCC00>Logs"), minecraft.font);
         title.setPosition(width / 2 - minecraft.font.width(title.getMessage().getString()) / 2, 10);
         var box = MultiLineEditBox.builder()
                 .setX(width / 4).setY(30)
                 .build(minecraft.font, width - (width / 4) * 2, height / 2, Component.literal("Logs"));
-        var stupidButton = Button.builder(Component.literal("Понятно"), (btn) -> {
-            Minecraft.getInstance().setScreen(null);
-        }).pos(width / 2 - 50, height / 2 + 30).width(100).build();
+        var okButton = new TransparentButton(
+                Component.literal("Понятно"), width / 2 - 50, height / 2 + 35,
+                100, 20, 125, () -> Minecraft.getInstance().setScreen(null)
+        );
         box.setValue(JustHelperClient.LOGGER.unionCache());
 
         addRenderableWidget(title);
         addRenderableWidget(new LogsHolder(box));
-        addRenderableWidget(stupidButton);
+        addRenderableWidget(okButton);
     }
 
     public static class LogsHolder extends AbstractWidget {

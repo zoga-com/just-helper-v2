@@ -7,8 +7,6 @@ import com.prikolz.justhelper.util.JustMCUtils;
 import com.prikolz.justhelper.util.TextUtils;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 
-import java.nio.charset.StandardCharsets;
-
 public class ZlibCommand extends JustHelperCommand{
     public ZlibCommand() {
         super("zlib");
@@ -22,7 +20,7 @@ public class ZlibCommand extends JustHelperCommand{
                 .run(context -> {
                     var string = StringArgumentType.getString(context, "string");
                     var compressed = JustMCUtils.zlibCompress(string);
-                    return JustHelperCommand.feedback("<green>Сжатый текст zlib:<white> {0}", TextUtils.copyValue(compressed));
+                    return JustHelperCommand.feedback("<#9AFF1F>Сжатый текст zlib:<white> {0}", TextUtils.copyValue(compressed));
                 });
 
         var decompressBranch = new LineCommand("decompress")
@@ -31,10 +29,10 @@ public class ZlibCommand extends JustHelperCommand{
                     var string = StringArgumentType.getString(context, "zlib");
                     try {
                         var decompressed = JustMCUtils.zlibDecompress(string);
-                        return JustHelperCommand.feedback("<green>Распакованный текст zlib:<white> {0}", TextUtils.copyValue(decompressed));
+                        return JustHelperCommand.feedback("<#9AFF1F>Распакованный текст zlib:<white> {0}", TextUtils.copyValue(decompressed));
                     } catch (Throwable t) {
                         JustHelperClient.LOGGER.printStackTrace(t, JustHelperClient.JustHelperLogger.LogType.ERROR);
-                        return JustHelperCommand.feedback("Ошибка распаковки: {0}", t.getMessage());
+                        return JustHelperCommand.feedback("<#FF6467>Ошибка распаковки: {0}", t.getMessage());
                     }
                 });
 

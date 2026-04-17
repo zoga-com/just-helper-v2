@@ -118,4 +118,12 @@ public class TextUtils {
         if (text.length() <= length) return text;
         return text.substring(0, length) + "... (+" + (text.length() - length) + ")";
     }
+
+    public static String findLongestString(Component... strings) {
+        String longest = "";
+        for (Component str : strings) {
+            if(longest.length() < str.getString().length()) longest = str.getString();
+        }
+        return longest;
+    }
 }

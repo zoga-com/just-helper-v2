@@ -24,7 +24,7 @@ public class LineCommand {
     public LineCommand(String name) {
         this.main = JustHelperCommands.literal(name);
         this.onRunError = (context, error) -> {
-            JustHelperCommand.feedback("<red>При выполнении команды произошла ошибка: {0}\nПодробнее /justhelper logs", error.getMessage());
+            JustHelperCommand.feedback("<#FF6467>При выполнении команды произошла ошибка: {0}\nПодробнее /justhelper logs", error.getMessage());
             JustHelperClient.LOGGER.printStackTrace(error);
             return 0;
         };

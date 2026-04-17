@@ -88,7 +88,7 @@ public class ItemEditorCommand extends JustHelperCommand {
         return new LineCommand("color")
                 .run(context -> itemResolver(item -> {
                     var color = item.get(DataComponents.DYED_COLOR);
-                    if (color == null) return JustHelperCommand.feedback("<yellow>Компонент цвета не установлен");
+                    if (color == null) return JustHelperCommand.feedback("<#FF6467>Компонент цвета не установлен");
                     var rgb = color.rgb();
                     var hex = String.format("%06x", rgb);
                     int r = (rgb >> 16) & 0xFF;
@@ -233,7 +233,7 @@ public class ItemEditorCommand extends JustHelperCommand {
         return JustHelperCommands.literal("equipment")
                 .executes(context -> itemResolver(item -> {
                     var data = item.get(DataComponents.EQUIPPABLE);
-                    if (data == null) return JustHelperCommand.feedback("<yellow>Компонент экипировки не установлен");
+                    if (data == null) return JustHelperCommand.feedback("<#FF6467>Компонент экипировки не установлен");
                     return JustHelperCommand.feedback(
                             """
                             <green>Заданные параметры <white>экипировки<green>:
@@ -291,7 +291,7 @@ public class ItemEditorCommand extends JustHelperCommand {
         return new LineCommand("profile")
                 .run(context -> itemResolver(item -> {
                     var profile = item.get(DataComponents.PROFILE);
-                    if (profile == null) return JustHelperCommand.feedback("<yellow>Профиль предмета не задан!");
+                    if (profile == null) return JustHelperCommand.feedback("<#FF6467>Профиль предмета не задан!");
                     JustHelperCommand.feedback("<aqua>ⓘ<white> Профиль предмета:");
                     JustHelperCommand.feedback("");
                     profile.partialProfile().properties().forEach((k, v) -> JustHelperCommand.feedback(
@@ -409,7 +409,7 @@ public class ItemEditorCommand extends JustHelperCommand {
         var list = new LineCommand("list")
                 .run(context -> itemResolver(item -> {
                     var modifiers = item.get(DataComponents.ATTRIBUTE_MODIFIERS);
-                    if (modifiers == null) return JustHelperCommand.feedback("<yellow>Модификаторы не найдены!");
+                    if (modifiers == null) return JustHelperCommand.feedback("<#FF6467>Модификаторы не найдены!");
                     JustHelperCommand.feedback("<yellow>⏷ <white>Список модификаторов:");
                     final var messagesMap = new HashMap<Holder<Attribute>, List<Component>>();
                     modifiers.modifiers().forEach(entry -> {
@@ -459,7 +459,7 @@ public class ItemEditorCommand extends JustHelperCommand {
                 .run(context -> itemResolver(item -> {
                     var key = ReferenceArgumentType.<String>getReference(context, "key");
                     var tags = getBukkitTags(item);
-                    if (!tags.contains(TAG_NAMESPACE + key)) return JustHelperCommand.feedback("<yellow>Тег <white>{0} <yellow>не найден!", key);
+                    if (!tags.contains(TAG_NAMESPACE + key)) return JustHelperCommand.feedback("<#FF6467>Тег <white>{0} <#FF6467>не найден!", key);
                     tags.remove(TAG_NAMESPACE + key);
                     setBukkitTags(tags, item);
                     return JustHelperCommand.feedback(1, "<green>Тег <white>{0}<green> удален!", key);
@@ -544,13 +544,13 @@ public class ItemEditorCommand extends JustHelperCommand {
 
         if (player == null) return 0;
         var item = player.getItemBySlot(EquipmentSlot.MAINHAND);
-        if (item.isEmpty()) return JustHelperCommand.feedback("<red>Item+ >> Для редактирования предмета вы должны держать его в ведущей руке.");
+        if (item.isEmpty()) return JustHelperCommand.feedback("<#FF6467>Item+ >> Для редактирования предмета вы должны держать его в ведущей руке.");
         int result;
         try {
             result = provider.provide(item);
         } catch (Throwable t) {
             JustHelperClient.LOGGER.printStackTrace(t, JustHelperClient.JustHelperLogger.LogType.ERROR);
-            return JustHelperCommand.feedback("<red>Item+ >> Ошибка выполнения: " + t.getMessage());
+            return JustHelperCommand.feedback("<#FF6467>Item+ >> Ошибка выполнения: " + t.getMessage());
         }
         if (result > 0) {
             player.swing(InteractionHand.MAIN_HAND, false);

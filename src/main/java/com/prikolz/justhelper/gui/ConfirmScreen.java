@@ -1,15 +1,15 @@
 package com.prikolz.justhelper.gui;
 
 import com.prikolz.justhelper.gui.widgets.FrameWidget;
+import com.prikolz.justhelper.util.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.MultiLineTextWidget;
 import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Style;
 import org.jspecify.annotations.Nullable;
+import ru.zoga_com.jmcd.widgets.TransparentButton;
 
 public class ConfirmScreen extends Screen {
     public final String title;
@@ -31,7 +31,7 @@ public class ConfirmScreen extends Screen {
 
     @Override
     protected void init() {
-        var title = new StringWidget(Component.literal(this.title).setStyle(Style.EMPTY.withColor(0xFFCC00)), font);
+        var title = new StringWidget(TextUtils.minimessage("<#FFCC00>" + this.title), font);
         title.setPosition(width / 2 - font.width(this.title) / 2, 15);
         MultiLineTextWidget desc = null;
         FrameWidget frame = null;
@@ -43,19 +43,14 @@ public class ConfirmScreen extends Screen {
             desc.setHeight(100);
             frame = new FrameWidget(208, 108).setPos(desc.getX() - 4, desc.getY() - 4);
         }
-        var yes = Button.builder(Component.translatable("gui.yes"), (btn) -> onYes.run())
-                .width(100)
-                .pos(width / 2 + 5, 155)
-                .build();
-        var no = Button.builder(Component.translatable("gui.no"), (btn) -> onNo.run())
-                .width(100)
-                .pos(width / 2 - 105, 155)
-                .build();
-        addRenderableWidget(title);
+        var yes = new TransparentButton(Component.translatable("gui.yes"), width / 2 + 5, 155, 100, 20, 125, onYes);
+        var no = new TransparentButton(Component.translatable("gui.no"), width / 2 - 105, 155, 100, 20, 125, onNo);
+
         if (desc != null) {
             addRenderableWidget(frame);
             addRenderableWidget(desc);
         }
+        addRenderableWidget(title);
         addRenderableWidget(yes);
         addRenderableWidget(no);
     }
