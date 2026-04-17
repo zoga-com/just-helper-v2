@@ -1,4 +1,4 @@
-<img src="src/main/resources/assets/just-helper/icon.png" width="128" alt="Иконка мода">
+<img src="src/main/resources/assets/jmcd/icon.png" width="128" alt="Иконка мода">
 
 # JustMC Devtools (JMCD)
 
