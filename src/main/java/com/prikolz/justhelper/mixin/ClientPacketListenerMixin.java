@@ -45,7 +45,7 @@ public class ClientPacketListenerMixin {
             return;
         }
         if (command.length() > 256) {
-            JustHelperCommand.feedback("<red>[Just Helper] The server command size > 256 chars!");
+            JustHelperCommand.feedback("<#FF6467>[Just Helper] The server command size > 256 chars!");
             ci.cancel();
             return;
         }

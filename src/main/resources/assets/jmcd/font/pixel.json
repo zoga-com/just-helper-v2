@@ -2,7 +2,7 @@
     "providers": [
         {
             "type": "bitmap",
-            "file": "just-helper:font/pixels.png",
+            "file": "jmcd:font/pixels.png",
             "ascent": 8,
             "height": 8,
             "chars": [

@@ -10,7 +10,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ComponentPath;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.*;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.MultiLineEditBox;
+import net.minecraft.client.gui.components.StringWidget;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.navigation.ScreenDirection;
@@ -22,13 +25,12 @@ import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ru.zoga_com.jmcd.widgets.TransparentButton;
 
 import java.util.Collection;
 
 public class ConfigScreen extends Screen {
     private JSONHolder editBox;
-    private Button saveButton;
-    private Button closeButton;
 
     protected ConfigScreen() {
         super(Component.literal("JustHelper configuration"));
@@ -42,45 +44,63 @@ public class ConfigScreen extends Screen {
     protected void init() {
         var json = editBox == null ? Config.getJSON() : editBox.box.getValue();
         var minecraft = Minecraft.getInstance();
-        var title = new StringWidget(TextUtils.minimessage("<blue>Just<red>Helper <#FFFFBB>JSON Config"), minecraft.font);
+        var title = new StringWidget(TextUtils.minimessage("<#FFCC00>Config (JSON)"), minecraft.font);
         title.setPosition(width / 2 - title.getWidth() / 2, 5);
-        saveButton = Button.builder(Component.translatable("gui.done"), (btn) -> {
-            Config.saveConfig(this.editBox.box.getValue());
-            Config.get().read();
-            Minecraft.getInstance().setScreen(null);
-            JustHelperCommand.feedback("<green>JustHelper >> Конфиг обновлен");
-        }).size(100, 20).pos(width / 2 + 7, height - 25).build();
+
+        var saveButton = new TransparentButton(
+                Component.translatable("gui.done"), width / 2 + 7, height - 25,
+                100, 20, 125,
+                () -> {
+                    Config.saveConfig(this.editBox.box.getValue());
+                    Config.get().read();
+                    Minecraft.getInstance().setScreen(null);
+                    JustHelperCommand.feedback("<sprite:gui:icon/checkmark><#9AFF1F> Конфиг обновлен");
+                }
+        );
 
         var editBox = net.minecraft.client.gui.components.MultiLineEditBox.builder()
                 .setX(20)
                 .setY(20)
                 .build(minecraft.font, this.width - 40, this.height - 60, Component.literal("JSON"));
-        editBox.setValue( json );
+        editBox.setValue(json);
         this.editBox = new JSONHolder(editBox, saveButton);
 
-        closeButton = Button.builder(Component.translatable("gui.cancel"), (btn) -> {
-            minecraft.setScreen(null);
-        }).size(100, 20).pos(width / 2 - 107, height - 25).build();
+        var closeButton = new TransparentButton(
+                Component.translatable("gui.cancel"), width / 2 - 107, height - 25,
+                100, 20, 125,
+                () -> minecraft.setScreen(null)
+        );
 
-        var resetButton = Button.builder(Component.translatable("controls.reset"), (btn) -> {
-            Minecraft.getInstance().setScreen(new ConfirmScreen(
-                    "Сбросить конфиг?",
-                    "Конфиг JustHelper будет сброшен до значений по умолчанию.",
-                    () -> {
-                        Config.printLogs( Config.get().reset() );
-                        Config.get().read();
-                        JustHelperCommand.feedback("<green>JustHelper >> Конфиг обновлен");
-                        Minecraft.getInstance().setScreen(null);
-                    },
-                    () -> Minecraft.getInstance().setScreen(this)
-            ));
-        }).pos(width - 70, height - 40).width(50).build();
+        var resetButton = new TransparentButton(
+                Component.translatable("controls.reset"), width - 70, height - 35,
+                50, 20, 125,
+                () -> {
+                    Minecraft.getInstance().setScreen(new ConfirmScreen(
+                            "Сбросить конфиг?",
+                            "Конфиг JustHelper будет сброшен до значений по умолчанию.",
+                            () -> {
+                                Config.printLogs(Config.get().reset());
+                                Config.get().read();
+                                JustHelperCommand.feedback("<sprite:gui:icon/checkmark><#9AFF1F> Конфиг обновлен");
+                                Minecraft.getInstance().setScreen(null);
+                            },
+                            () -> Minecraft.getInstance().setScreen(this)
+                    ));
+                }
+        );
 
-        var folderButton = ImageButton.builder(TextUtils.minimessage("<white><font:just-helper:icons>0"), (btn) -> {
-            Config.openConfigFolder();
-        }).tooltip(Tooltip.create(Component.literal("Открыть папку"))).pos(20, height - 40).width(20).build();
+        var folderButton = new TransparentButton(
+                TextUtils.minimessage("<white><font:jmcd:icons>0"),
+                20,
+                height - 35,
+                20, 20,
+                125,
+                Component.literal("Открыть папку"),
+                Config::openConfigFolder
+        );
 
         this.editBox.checkValid();
+
         addRenderableWidget(this.editBox);
         addRenderableWidget(closeButton);
         addRenderableWidget(saveButton);
@@ -95,16 +115,17 @@ public class ConfigScreen extends Screen {
     }
 
     @Override
-    public boolean shouldCloseOnEsc() { return true; }
+    public boolean shouldCloseOnEsc() {
+        return true;
+    }
 
     static class JSONHolder extends AbstractWidget {
-
         private final MultiLineEditBox box;
-        private final Button saveButton;
+        private final TransparentButton saveButton;
         private ExceptionInfo error = new ExceptionInfo(0, false, "");
         private final Font font;
 
-        public JSONHolder(MultiLineEditBox box, Button saveButton) {
+        public JSONHolder(MultiLineEditBox box, TransparentButton saveButton) {
             super(box.getX(), box.getY(), box.getWidth(), box.getHeight(), Component.literal("JSON"));
             this.box = box;
             this.saveButton = saveButton;
@@ -113,12 +134,11 @@ public class ConfigScreen extends Screen {
         }
 
         public void checkValid() {
-            var json = box.getValue();
             error = new ExceptionInfo(0, false, "");
             saveButton.active = true;
             saveButton.setTooltip(null);
             try {
-                var obj = JustHelperClient.GSON.fromJson(json, JsonObject.class);
+                var obj = JustHelperClient.GSON.fromJson(box.getValue(), JsonObject.class);
                 JustHelperClient.GSON.toJson(obj);
             } catch (Throwable t) {
                 var lineError = 0;
@@ -128,16 +148,17 @@ public class ConfigScreen extends Screen {
                     var sub = errorMessage.substring(i + 5);
                     i = sub.indexOf(" ");
                     if (i != -1) lineError = Integer.parseInt(sub.substring(0, i));
-                } catch (Throwable ignore) {}
+                } catch (Throwable ignore) {
+                }
                 error = new ExceptionInfo(lineError, true, t.getMessage());
                 saveButton.active = false;
                 saveButton.setTooltip(Tooltip.create(
                         TextUtils.minimessage("<red>Ошибка JSON\n" + TextUtils.splitByWord(t.getMessage(), 40)),
-                        Component.literal( t.getMessage() )
+                        Component.literal(t.getMessage())
                 ));
             }
             var abox = (MultiLineEditBoxMixin) box;
-            abox.setTextColor( error.error ? 0xffFFAA55 : 0xffFFFFBB);
+            abox.setTextColor(error.error ? 0xffFFAA55 : 0xffFFFFBB);
         }
 
         @Override
@@ -147,10 +168,10 @@ public class ConfigScreen extends Screen {
                 var lineCount = ((MultiLineEditBoxMixin) box).getTextField().getLineCount();
                 var pos = ((double) error.line / lineCount) * (box.maxScrollAmount() + box.getHeight() - 4);
                 if (box.scrollAmount() > pos) return;
-                pos = (pos * 0.99 - 5 - box.scrollAmount());
+                pos = (pos * 0.99 - 2 - box.scrollAmount());
                 if (pos > box.getHeight()) return;
                 int markerX = box.getX() - 12;
-                guiGraphics.drawString(font, "⚠", markerX,(int) (pos) + box.getY(), 0xffFFAA00);
+                guiGraphics.drawString(font, TextUtils.minimessage("<sprite:gui:icon/unseen_notification>"), markerX, (int) (pos) + box.getY(), 0xffFFAA00);
             }
         }
 
@@ -180,16 +201,6 @@ public class ConfigScreen extends Screen {
         }
 
         @Override
-        public boolean mouseDragged(MouseButtonEvent mouseButtonEvent, double d, double e) {
-            return box.mouseDragged(mouseButtonEvent, d, e);
-        }
-
-        @Override
-        protected void onDrag(MouseButtonEvent mouseButtonEvent, double d, double e) {
-            ((MultiLineEditBoxMixin) box).onDrag(mouseButtonEvent, d, e);
-        }
-
-        @Override
         public boolean keyPressed(KeyEvent keyEvent) {
             boolean result = box.keyPressed(keyEvent);
             checkValid();
@@ -205,7 +216,7 @@ public class ConfigScreen extends Screen {
 
         @Override
         public boolean mouseScrolled(double d, double e, double f, double g) {
-            return box.mouseScrolled(d, e, f ,g);
+            return box.mouseScrolled(d, e, f, g * 5);
         }
 
         @Override

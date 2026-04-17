@@ -39,6 +39,7 @@ public class JustHelperCommands {
         register(new ZlibCommand());
         register(new GzipCommand());
         register(new TextEditorCommand());
+        register(new TestMiniMessageCommand());
     }
 
     public static void registerDispatcher(CommandDispatcher<ClientSuggestionProvider> dispatcher) {

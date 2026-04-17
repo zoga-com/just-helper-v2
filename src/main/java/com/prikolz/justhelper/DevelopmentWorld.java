@@ -115,7 +115,7 @@ public abstract class DevelopmentWorld {
             display = "<yellow>" + floor + "<white>/<yellow>" + pos.line + " л<white>/<yellow>" + pos.pos + " п";
         }
         JustHelperCommand.feedback(
-                "\n<click:run_command:'/tp {1} {2} {3}'><hover:show_text:'{0}'><aqua>⚓ <white>Вернутся на <aqua>>> {4} <aqua><<\n",
+                "\n<click:run_command:'/tp {1} {2} {3}'><hover:show_text:'{0}'><aqua>⚓ <white>Вернуться на <aqua>>> {4} <aqua><<\n",
                 hover,
                 player.getX(),
                 player.getY(),

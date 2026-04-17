@@ -28,9 +28,9 @@ public class DescribeCommand extends JustHelperCommand {
     }
 
     public static int showFloor(int floor) {
-        if (!DevelopmentWorld.isActive()) return JustHelperCommand.feedback("<yellow>Доступно только в мире кода!");
+        if (!DevelopmentWorld.isActive()) return JustHelperCommand.feedback("<sprite:items:item/command_block_minecart><#FF6467> Доступно только в мире кода!");
         String text = DevelopmentWorld.describes.describes.get(floor);
-        if (text == null) return JustHelperCommand.feedback("<dark_gray>Описание этажа {0} не найдено", floor);
+        if (text == null) return JustHelperCommand.feedback("<#FF6467>Описание этажа {0} не найдено", floor);
         JustHelperCommand.feedback(
                 "<yellow>{0}{2}<dark_gray> |> <click:suggest_command:'{3}'><hover:show_text:'{4}'><white>{1}",
                 floor,
@@ -43,7 +43,7 @@ public class DescribeCommand extends JustHelperCommand {
     }
 
     public static int showAll() {
-        if (!DevelopmentWorld.isActive()) return JustHelperCommand.feedback("<yellow>Доступно только в мире кода!");
+        if (!DevelopmentWorld.isActive()) return JustHelperCommand.feedback("<sprite:items:item/command_block_minecart><#FF6467> Доступно только в мире кода!");
         JustHelperCommand.feedback("<yellow>v <white>Описания этажей:");
         DevelopmentWorld.describes.describes.keySet().forEach(DescribeCommand::showFloor);
         JustHelperCommand.feedback("<yellow>^");

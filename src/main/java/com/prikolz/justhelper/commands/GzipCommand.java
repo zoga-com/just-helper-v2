@@ -21,11 +21,11 @@ public class GzipCommand extends JustHelperCommand {
                     try {
                         var result = JustMCUtils.gzipCompress(text);
                         return JustHelperCommand.feedback(
-                                "<green>Сжатый текст gzip:<white>\n{0}",
+                                "<#9AFF1F>Сжатый текст gzip:<white>\n{0}",
                                 TextUtils.copyValue(result)
                         );
                     } catch (Throwable e) {
-                        return JustHelperCommand.feedback("<red>Ошибка сжатия: {0}", e.getMessage());
+                        return JustHelperCommand.feedback("<#FF6467>Ошибка сжатия: {0}", e.getMessage());
                     }
                 })
                 .build();
@@ -37,11 +37,11 @@ public class GzipCommand extends JustHelperCommand {
                     try {
                         var text = JustMCUtils.gzipDecompress(gzip);
                         return JustHelperCommand.feedback(
-                                "<green>Распакованный текст gzip:<white>\n{0}",
+                                "<#9AFF1F>Распакованный текст gzip:<white>\n{0}",
                                 TextUtils.copyValue(text)
                         );
                     } catch (Throwable t) {
-                        return JustHelperCommand.feedback("<red>Ошибка распаковки: {0}", t.getMessage());
+                        return JustHelperCommand.feedback("<#FF6467>Ошибка распаковки: {0}", t.getMessage());
                     }
                 })
                 .build();
