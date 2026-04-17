@@ -8,16 +8,15 @@ import net.fabricmc.api.ClientModInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class JustHelperClient implements ClientModInitializer {
-	public static final String MOD_ID = "just-helper";
+	public static final String MOD_ID = "jmcd";
 	public static final JustHelperLogger LOGGER = new JustHelperLogger(LoggerFactory.getLogger(MOD_ID));
 	public static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 

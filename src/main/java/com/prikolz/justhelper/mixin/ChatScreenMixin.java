@@ -46,7 +46,7 @@ public abstract class ChatScreenMixin<T extends ChatScreen> extends Screen {
         spacesCheckBox = new ChatCheckbox(
                 width - (ReflectionUtils.isClassLoaded("com.aizistral.nochatreports.common.NCRCore") ? 40 : 15),
                 height - 30,
-                TextUtils.minimessage("<font:just-helper:icons>1"),
+                TextUtils.minimessage("<font:jmcd:icons>1"),
                 allowDoubleSpaces,
                 (w, v) -> allowDoubleSpaces = v
         );

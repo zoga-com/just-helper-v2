@@ -12,9 +12,9 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 
 public class ChatCheckbox extends AbstractWidget {
-    private static final Identifier CHECKBOX_SELECTED_SPRITE = Identifier.parse("just-helper:checkbox_selected");
-    private static final Identifier CHECKBOX_SPRITE = Identifier.parse("just-helper:checkbox");
-    private static final Identifier CHECKBOX_SWAG = Identifier.parse("just-helper:ludi");
+    private static final Identifier CHECKBOX_SELECTED_SPRITE = Identifier.parse("jmcd:checkbox_selected");
+    private static final Identifier CHECKBOX_SPRITE = Identifier.parse("jmcd:checkbox");
+    private static final Identifier CHECKBOX_SWAG = Identifier.parse("jmcd:ludi");
     private final Font font;
     private final OnChange onChange;
 

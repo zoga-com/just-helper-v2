@@ -22,6 +22,7 @@ import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ru.zoga_com.jmcd.widgets.TransparentButton;
 
 import java.util.Collection;
 
@@ -55,32 +56,41 @@ public class ConfigScreen extends Screen {
                 .setX(20)
                 .setY(20)
                 .build(minecraft.font, this.width - 40, this.height - 60, Component.literal("JSON"));
-        editBox.setValue( json );
+        editBox.setValue(json);
         this.editBox = new JSONHolder(editBox, saveButton);
 
         closeButton = Button.builder(Component.translatable("gui.cancel"), (btn) -> {
             minecraft.setScreen(null);
         }).size(100, 20).pos(width / 2 - 107, height - 25).build();
 
-        var resetButton = Button.builder(Component.translatable("controls.reset"), (btn) -> {
-            Minecraft.getInstance().setScreen(new ConfirmScreen(
-                    "Сбросить конфиг?",
-                    "Конфиг JustHelper будет сброшен до значений по умолчанию.",
-                    () -> {
-                        Config.printLogs( Config.get().reset() );
-                        Config.get().read();
-                        JustHelperCommand.feedback("<green>JustHelper >> Конфиг обновлен");
-                        Minecraft.getInstance().setScreen(null);
-                    },
-                    () -> Minecraft.getInstance().setScreen(this)
-            ));
-        }).pos(width - 70, height - 40).width(50).build();
+        var resetButton = new TransparentButton(
+                Component.translatable("controls.reset").getString(),
+                width - 70,
+                height - 35,
+                50,
+                20,
+                125,
+                () -> {
+                    Minecraft.getInstance().setScreen(new ConfirmScreen(
+                            "Сбросить конфиг?",
+                            "Конфиг JustHelper будет сброшен до значений по умолчанию.",
+                            () -> {
+                                Config.printLogs(Config.get().reset());
+                                Config.get().read();
+                                JustHelperCommand.feedback("<green>JustHelper >> Конфиг обновлен");
+                                Minecraft.getInstance().setScreen(null);
+                            },
+                            () -> Minecraft.getInstance().setScreen(this)
+                    ));
+                }
+        );
 
-        var folderButton = ImageButton.builder(TextUtils.minimessage("<white><font:just-helper:icons>0"), (btn) -> {
+        var folderButton = ImageButton.builder(TextUtils.minimessage("<white><font:jmcd:icons>0"), (btn) -> {
             Config.openConfigFolder();
-        }).tooltip(Tooltip.create(Component.literal("Открыть папку"))).pos(20, height - 40).width(20).build();
+        }).tooltip(Tooltip.create(Component.literal("Открыть папку"))).pos(20, height - 35).width(20).build();
 
         this.editBox.checkValid();
+
         addRenderableWidget(this.editBox);
         addRenderableWidget(closeButton);
         addRenderableWidget(saveButton);
@@ -95,7 +105,9 @@ public class ConfigScreen extends Screen {
     }
 
     @Override
-    public boolean shouldCloseOnEsc() { return true; }
+    public boolean shouldCloseOnEsc() {
+        return true;
+    }
 
     static class JSONHolder extends AbstractWidget {
 
@@ -128,16 +140,17 @@ public class ConfigScreen extends Screen {
                     var sub = errorMessage.substring(i + 5);
                     i = sub.indexOf(" ");
                     if (i != -1) lineError = Integer.parseInt(sub.substring(0, i));
-                } catch (Throwable ignore) {}
+                } catch (Throwable ignore) {
+                }
                 error = new ExceptionInfo(lineError, true, t.getMessage());
                 saveButton.active = false;
                 saveButton.setTooltip(Tooltip.create(
                         TextUtils.minimessage("<red>Ошибка JSON\n" + TextUtils.splitByWord(t.getMessage(), 40)),
-                        Component.literal( t.getMessage() )
+                        Component.literal(t.getMessage())
                 ));
             }
             var abox = (MultiLineEditBoxMixin) box;
-            abox.setTextColor( error.error ? 0xffFFAA55 : 0xffFFFFBB);
+            abox.setTextColor(error.error ? 0xffFFAA55 : 0xffFFFFBB);
         }
 
         @Override
@@ -150,7 +163,7 @@ public class ConfigScreen extends Screen {
                 pos = (pos * 0.99 - 5 - box.scrollAmount());
                 if (pos > box.getHeight()) return;
                 int markerX = box.getX() - 12;
-                guiGraphics.drawString(font, "⚠", markerX,(int) (pos) + box.getY(), 0xffFFAA00);
+                guiGraphics.drawString(font, "⚠", markerX, (int) (pos) + box.getY(), 0xffFFAA00);
             }
         }
 
@@ -205,7 +218,7 @@ public class ConfigScreen extends Screen {
 
         @Override
         public boolean mouseScrolled(double d, double e, double f, double g) {
-            return box.mouseScrolled(d, e, f ,g);
+            return box.mouseScrolled(d, e, f, g);
         }
 
         @Override
@@ -233,6 +246,7 @@ public class ConfigScreen extends Screen {
             return box.getNarratables();
         }
 
-        public record ExceptionInfo(int line, boolean error, String message) {}
+        public record ExceptionInfo(int line, boolean error, String message) {
+        }
     }
 }
