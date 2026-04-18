@@ -7,6 +7,7 @@ import com.prikolz.justhelper.gui.TextEditorScreen;
 import com.prikolz.justhelper.util.JustMCUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
+import ru.zoga_com.jmcd.Messages;
 
 public class TextEditorCommand extends JustHelperCommand {
     public TextEditorCommand() {
@@ -20,7 +21,7 @@ public class TextEditorCommand extends JustHelperCommand {
             var client = Minecraft.getInstance();
             if (client.getConnection() == null || client.player == null) return 0;
             if(!DevelopmentWorld.isActive() || !JustMCUtils.isTextValue(client.player.getMainHandItem())) {
-                return JustHelperCommand.feedback("<sprite:items:item/command_block_minecart><#FF6467> Доступно только в мире кода!");
+                return JustHelperCommand.feedback(Messages.ONLY_ON_DEV);
             }
 
             client.schedule(() ->

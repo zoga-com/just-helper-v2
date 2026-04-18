@@ -1,4 +1,4 @@
-package ru.zoga_com.jmcd.widgets;
+package ru.zoga_com.jmcd.ui.widgets;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;

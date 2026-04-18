@@ -9,6 +9,7 @@ import com.prikolz.justhelper.util.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 import net.minecraft.network.chat.Component;
+import ru.zoga_com.jmcd.Messages;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,17 +21,17 @@ public class FindCommand extends JustHelperCommand {
     public static SignsSearchingArgumentType.InfoPack lastFound = new SignsSearchingArgumentType.InfoPack(List.of());
     public static String lastPrompt = ":3";
 
-    public static String toMini(String str) {
-        String result = str;
-        for(String key : miniChars().keySet()) {
-            result = result.replaceAll(key, miniChars.get(key));
-        }
-        return result;
-    }
-
     public FindCommand() {
         super("find");
         this.description = "[Параметры поиска] <gray>- Поиск блоков кода по содержанию табличек. Отображает все совпадения в чате. Пример использования: /find событие. Используйте в начале параметров '!', чтобы включить расширенный поиск.";
+    }
+
+    public static String toMini(String str) {
+        String result = str;
+        for (String key : miniChars().keySet()) {
+            result = result.replaceAll(key, miniChars.get(key));
+        }
+        return result;
     }
 
     @Override
@@ -39,10 +40,10 @@ public class FindCommand extends JustHelperCommand {
                 JustHelperCommands.argument(
                         "text", new SignsSearchingArgumentType()
                 ).executes((context -> {
-                    var found = SignsSearchingArgumentType.getFound(context, "text");
-                    execute(found, 0);
-                    return 1;
-                })
+                            var found = SignsSearchingArgumentType.getFound(context, "text");
+                            execute(found, 0);
+                            return 1;
+                        })
                 )
         );
     }
@@ -56,7 +57,7 @@ public class FindCommand extends JustHelperCommand {
 
         if (unpack.isEmpty()) {
             JustHelperCommand.feedback(
-                    "\n<hover:show_text:'Параметры поиска:<yellow>\n{0}'><click:suggest_command:'{1}'><dark_gray> ♯ Ничего не найдено ♯",
+                    Messages.FIND_EMPTY,
                     SignsSearchingArgumentType.lastInput,
                     "/find " + SignsSearchingArgumentType.lastInput,
                     found.pack().size()
@@ -65,7 +66,7 @@ public class FindCommand extends JustHelperCommand {
         }
 
         JustHelperCommand.feedback(
-                "\n<hover:show_text:'Параметры поиска:<yellow>\n{0}'><click:suggest_command:'{1}'><yellow> ♯<white> Найдено {2} совпадений:\n",
+                Messages.FIND,
                 SignsSearchingArgumentType.lastInput,
                 "/find " + SignsSearchingArgumentType.lastInput,
                 found.pack().size()
@@ -80,7 +81,7 @@ public class FindCommand extends JustHelperCommand {
                 break;
             }
             var info = unpack.get(i);
-            JustHelperCommand.feedback( createSignMessage(info) );
+            JustHelperCommand.feedback(createSignMessage(info));
         }
 
         var controllerBuilder = new StringBuilder();
@@ -105,7 +106,7 @@ public class FindCommand extends JustHelperCommand {
         var sign = info.sign();
         var pos = sign.codePos;
         var lastPrompt = SignsSearchingArgumentType.lastInput;
-        String miniLine = toMini("<white>" + pos.line );
+        String miniLine = toMini("<white>" + pos.line);
         if (pos.line < 10) miniLine = miniLine + " ";
         String clickCommand = "/tp " + (0.5 + pos.blockPos.getX()) + " " + pos.blockPos.getY() + " " + (2.5 + pos.blockPos.getZ());
         String signMainLine = "<gold>● <white>" + info.lines()[0].replaceAll(lastPrompt, "<yellow>" + lastPrompt + "<white>");
@@ -129,10 +130,10 @@ public class FindCommand extends JustHelperCommand {
     }
 
     public static void findEach(BlockCodePos target) {
-        if ( !Config.get().findEach.value ) return;
+        if (!Config.get().findEach.value) return;
         int i = 0;
         for (var entry : lastFound.pack()) {
-            if ( entry.sign().codePos.equals(target) ) {
+            if (entry.sign().codePos.equals(target)) {
                 JustHelperCommand.feedback("┌");
                 JustHelperCommand.feedback("│ {0}<gray>/<white>{1}", entry.lines()[0], entry.lines()[1]);
                 String prev = getInLastFound(i - 1, "←");
@@ -165,22 +166,6 @@ public class FindCommand extends JustHelperCommand {
     }
 
     private static HashMap<String, String> miniChars() {
-        HashMap<String, String> result = new HashMap<>();
-
-        result.put("0", "₀");
-        result.put("1", "₁");
-        result.put("2", "₂");
-        result.put("3", "₃");
-        result.put("4", "₄");
-        result.put("5", "₅");
-        result.put("6", "₆");
-        result.put("7", "₇");
-        result.put("8", "₈");
-        result.put("9", "₉");
-        result.put("-", "₋");
-        result.put("\\(", "₍");
-        result.put("\\)", "₎");
-
         //result.put("a", "ᴀ");
         //result.put("b", "ʙ");
         //result.put("c", "ᴄ");
@@ -208,6 +193,20 @@ public class FindCommand extends JustHelperCommand {
         //result.put("y", "ʏ");
         //result.put("z", "ᴢ");
 
-        return result;
+        return new HashMap<>() {{
+            put("0", "₀");
+            put("1", "₁");
+            put("2", "₂");
+            put("3", "₃");
+            put("4", "₄");
+            put("5", "₅");
+            put("6", "₆");
+            put("7", "₇");
+            put("8", "₈");
+            put("9", "₉");
+            put("-", "₋");
+            put("\\(", "₍");
+            put("\\)", "₎");
+        }};
     }
 }

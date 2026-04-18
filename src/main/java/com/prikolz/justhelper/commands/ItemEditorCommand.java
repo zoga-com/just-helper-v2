@@ -11,14 +11,10 @@ import com.prikolz.justhelper.commands.arguments.ColorArgumentType;
 import com.prikolz.justhelper.commands.arguments.GreedyArgumentType;
 import com.prikolz.justhelper.commands.arguments.ReferenceArgumentType;
 import com.prikolz.justhelper.commands.arguments.ValidStringArgumentType;
+import com.prikolz.justhelper.gui.ItemDisplayEditorScreen;
 import com.prikolz.justhelper.util.MojangUtils;
 import com.prikolz.justhelper.util.TextUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.client.gui.components.MultiLineEditBox;
-import net.minecraft.client.gui.components.StringWidget;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 import net.minecraft.commands.arguments.IdentifierArgument;
 import net.minecraft.commands.arguments.ResourceArgument;
@@ -41,8 +37,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
-import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.item.equipment.Equippable;
+import ru.zoga_com.jmcd.Messages;
 
 import java.util.*;
 
@@ -66,29 +62,29 @@ public class ItemEditorCommand extends JustHelperCommand {
 
     public ItemEditorCommand() {
         super("item+");
-        this.description = "<gray>- Редактирование предмета(только в креативе), расширение возможностей /item(от Star).";
+        this.description = "<gray>- Редактирование предмета (только в креативе), расширение возможностей /item (от Star).";
     }
 
     @Override
     public LiteralArgumentBuilder<ClientSuggestionProvider> create(LiteralArgumentBuilder<ClientSuggestionProvider> main) {
-        return main.then( tagBranch() )
-                .then( modifierBranch() )
-                .then( profileBranch() )
-                .then( JustHelperCommands.literal("display").executes(context -> itemResolver(item -> {
+        return main.then(tagBranch())
+                .then(modifierBranch())
+                .then(profileBranch())
+                .then(JustHelperCommands.literal("display").executes(context -> itemResolver(item -> {
                     Minecraft.getInstance().schedule(() ->
-                            Minecraft.getInstance().setScreen( new ItemDisplayEditorScreen(item) )
+                            Minecraft.getInstance().setScreen(new ItemDisplayEditorScreen(item))
                     );
                     return 0;
                 })))
-                .then( equipmentBranch() )
-                .then( colorBranch() );
+                .then(equipmentBranch())
+                .then(colorBranch());
     }
 
     private LiteralArgumentBuilder<ClientSuggestionProvider> colorBranch() {
         return new LineCommand("color")
                 .run(context -> itemResolver(item -> {
                     var color = item.get(DataComponents.DYED_COLOR);
-                    if (color == null) return JustHelperCommand.feedback("<#FF6467>Компонент цвета не установлен");
+                    if (color == null) return JustHelperCommand.feedback(Messages.ITEM_EDITOR_COLOR_NOT_SET);
                     var rgb = color.rgb();
                     var hex = String.format("%06x", rgb);
                     int r = (rgb >> 16) & 0xFF;
@@ -96,7 +92,7 @@ public class ItemEditorCommand extends JustHelperCommand {
                     int b = rgb & 0xFF;
                     String rgbStr = r + " " + g + " " + b;
                     return JustHelperCommand.feedback(
-                            "Установленный цвет предмета:\n<reset>♯ HEX: <underlined><#{1}>{0}<reset>\n☰ RGB: <underlined><#{1}> {2}",
+                            Messages.ITEM_EDITOR_COLOR_CURRENT,
                             TextUtils.copyValue('#' + hex),
                             hex,
                             TextUtils.copyValue(rgbStr)
@@ -112,7 +108,7 @@ public class ItemEditorCommand extends JustHelperCommand {
                     int b = color & 0xFF;
                     String rgbStr = r + " " + g + " " + b;
                     return JustHelperCommand.feedback(
-                            "<green>Новый цвет предмета:\n<reset>♯ HEX: <underlined><#{1}>{0}<reset>\n☰ RGB: <underlined><#{1}> {2}",
+                            Messages.ITEM_EDITOR_COLOR_SET,
                             TextUtils.copyValue('#' + hex),
                             hex,
                             TextUtils.copyValue(rgbStr)
@@ -122,7 +118,6 @@ public class ItemEditorCommand extends JustHelperCommand {
     }
 
     private LiteralArgumentBuilder<ClientSuggestionProvider> equipmentBranch() {
-
         var buildContext = MojangUtils.createBuildContext();
 
         var slotBranch = new LineCommand("slot")
@@ -131,7 +126,7 @@ public class ItemEditorCommand extends JustHelperCommand {
                     var slot = ReferenceArgumentType.<EquipmentSlot>getReference(context, "slot");
                     var data = equippableCopy(item, slot);
                     item.set(DataComponents.EQUIPPABLE, data.build());
-                    return JustHelperCommand.feedback(1, "<green>Слот для экипировки: <white>{0}", slot);
+                    return JustHelperCommand.feedback(1, Messages.ITEM_EDITOR_EQUIPMENT_SLOT, slot);
                 })).build();
 
         var overlayBranch = new LineCommand("overlay")
@@ -140,16 +135,16 @@ public class ItemEditorCommand extends JustHelperCommand {
                     var overlay = MojangUtils.getId(context, "overlay");
                     var data = equippableCopy(item, null).setCameraOverlay(overlay);
                     item.set(DataComponents.EQUIPPABLE, data.build());
-                    return JustHelperCommand.feedback(1, "<green>Оверлей камеры: <white>{0}", overlay);
+                    return JustHelperCommand.feedback(1, Messages.ITEM_EDITOR_EQUIPMENT_OVERLAY, overlay);
                 })).build();
 
         var entitiesBranch = new LineCommand("entities")
                 .arg("entities", new GreedyArgumentType<>(ResourceArgument.resource(buildContext, Registries.ENTITY_TYPE), " "))
                 .run(context -> itemResolver(item -> {
                     var entities = GreedyArgumentType.<Holder.Reference<EntityType<?>>>getArgument(context, "entities");
-                    var data = equippableCopy(item, null).setAllowedEntities( HolderSet.direct(entities) );
+                    var data = equippableCopy(item, null).setAllowedEntities(HolderSet.direct(entities));
                     item.set(DataComponents.EQUIPPABLE, data.build());
-                    return JustHelperCommand.feedback(1, "<green>Разрешенные сущности: <white>{0}", entities);
+                    return JustHelperCommand.feedback(1, Messages.ITEM_EDITOR_EQUIPMENT_ALLOWED_ENTITIES, entities);
                 })).build();
 
         var dispensableBranch = new LineCommand("dispensable")
@@ -158,7 +153,7 @@ public class ItemEditorCommand extends JustHelperCommand {
                     var value = BoolArgumentType.getBool(context, "dispensable");
                     var data = equippableCopy(item, null).setDispensable(value);
                     item.set(DataComponents.EQUIPPABLE, data.build());
-                    return JustHelperCommand.feedback(1, "<green>'Необязательность': <white>{0}", value);
+                    return JustHelperCommand.feedback(1, Messages.ITEM_EDITOR_EQUIPMENT_DISPENSABLE, value);
                 })).build();
 
         var swappableBranch = new LineCommand("swappable")
@@ -167,7 +162,7 @@ public class ItemEditorCommand extends JustHelperCommand {
                     var value = BoolArgumentType.getBool(context, "swappable");
                     var data = equippableCopy(item, null).setSwappable(value);
                     item.set(DataComponents.EQUIPPABLE, data.build());
-                    return JustHelperCommand.feedback(1, "<green>Свап брони: <white>{0}", value);
+                    return JustHelperCommand.feedback(1, Messages.ITEM_EDITOR_EQUIPMENT_SWAPPABLE, value);
                 })).build();
 
         var damageOnHurtBranch = new LineCommand("damageOnHurt")
@@ -176,7 +171,7 @@ public class ItemEditorCommand extends JustHelperCommand {
                     var value = BoolArgumentType.getBool(context, "damageOnHurt");
                     var data = equippableCopy(item, null).setDamageOnHurt(value);
                     item.set(DataComponents.EQUIPPABLE, data.build());
-                    return JustHelperCommand.feedback(1, "<green>Разрушение от урона: <white>{0}", value);
+                    return JustHelperCommand.feedback(1, Messages.ITEM_EDITOR_EQUIPMENT_DAMAGE_ON_HURT, value);
                 })).build();
 
         var equipOnInteract = new LineCommand("equipOnInteract")
@@ -185,7 +180,7 @@ public class ItemEditorCommand extends JustHelperCommand {
                     var value = BoolArgumentType.getBool(context, "equipOnInteract");
                     var data = equippableCopy(item, null).setEquipOnInteract(value);
                     item.set(DataComponents.EQUIPPABLE, data.build());
-                    return JustHelperCommand.feedback(1, "<green>Экипировка от взаимодействия: <white>{0}", value);
+                    return JustHelperCommand.feedback(1, Messages.ITEM_EDITOR_EQUIPMENT_EQUIP_ON_INTERACT, value);
                 })).build();
 
         var equipSoundBranch = new LineCommand("equipSound")
@@ -194,15 +189,16 @@ public class ItemEditorCommand extends JustHelperCommand {
                     var value = MojangUtils.getResource(context, "sound", Registries.SOUND_EVENT);
                     var data = equippableCopy(item, null).setEquipSound(value);
                     item.set(DataComponents.EQUIPPABLE, data.build());
-                    return JustHelperCommand.feedback(1, "<green>Звук экипировки: <white>{0}", value.key().identifier());
+                    return JustHelperCommand.feedback(1, Messages.ITEM_EDITOR_EQUIPMENT_EQUIP_SOUND, value.key().identifier());
                 })).build();
 
         var gliderBranch = new LineCommand("glider")
                 .arg("glider", BoolArgumentType.bool())
                 .run(context -> itemResolver(item -> {
                     var value = BoolArgumentType.getBool(context, "glider");
-                    if (value) item.set(DataComponents.GLIDER, Unit.INSTANCE); else item.set(DataComponents.GLIDER, null);
-                    return JustHelperCommand.feedback(1, "<green>Режим планирования: <white>{0}", value);
+                    if (value) item.set(DataComponents.GLIDER, Unit.INSTANCE);
+                    else item.set(DataComponents.GLIDER, null);
+                    return JustHelperCommand.feedback(1, Messages.ITEM_EDITOR_EQUIPMENT_GLIDER, value);
                 })).build();
 
         var canShearingBranch = new LineCommand("canBeSheared")
@@ -211,7 +207,7 @@ public class ItemEditorCommand extends JustHelperCommand {
                     var value = BoolArgumentType.getBool(context, "canBeSheared");
                     var data = equippableCopy(item, null).setCanBeSheared(value);
                     item.set(DataComponents.EQUIPPABLE, data.build());
-                    return JustHelperCommand.feedback(1, "<green>Можно срезать: <white>{0}", value);
+                    return JustHelperCommand.feedback(1, Messages.ITEM_EDITOR_EQUIPMENT_CAN_BE_SHEARED, value);
                 })).build();
 
         var shearingSoundBranch = new LineCommand("shearingSound")
@@ -220,37 +216,22 @@ public class ItemEditorCommand extends JustHelperCommand {
                     var value = MojangUtils.getResource(context, "sound", Registries.SOUND_EVENT);
                     var data = equippableCopy(item, null).setShearingSound(value);
                     item.set(DataComponents.EQUIPPABLE, data.build());
-                    return JustHelperCommand.feedback(1, "<green>Звук срезания брони: <white>{0}", value.key().identifier());
+                    return JustHelperCommand.feedback(1, Messages.ITEM_EDITOR_EQUIPMENT_SHEARING_SOUND, value.key().identifier());
                 })).build();
 
         var removeBranch = new LineCommand("remove")
                 .add(JustHelperCommands.literal("confirm"))
                 .run(context -> itemResolver(item -> {
                     item.set(DataComponents.EQUIPPABLE, null);
-                    return JustHelperCommand.feedback(1, "<yellow>Компонент брони был удален");
+                    return JustHelperCommand.feedback(1, Messages.ITEM_EDITOR_EQUIPMENT_DELETED);
                 })).build();
 
         return JustHelperCommands.literal("equipment")
                 .executes(context -> itemResolver(item -> {
                     var data = item.get(DataComponents.EQUIPPABLE);
-                    if (data == null) return JustHelperCommand.feedback("<#FF6467>Компонент экипировки не установлен");
+                    if (data == null) return JustHelperCommand.feedback(Messages.ITEM_EDITOR_EQUIPMENT_NOT_SET);
                     return JustHelperCommand.feedback(
-                            """
-                            <green>Заданные параметры <white>экипировки<green>:
-                            <white>- Слот: <green>{0}
-                            <white>- Звук экипировки: <green>{1}
-                            <white>- Ассет: <green>{2}
-                            <white>- Оверлей: <green>{3}
-                            <white>- Сущности: <green>{4}
-                            <white>- Необязательный: <green>{5}
-                            <white>- Свап: <green>{6}
-                            <white>- Повреждения от урона: <green>{7}
-                            <white>- Экипировка от взаимодействия: <green>{8}
-                            <white>- Можно срезать: <green>{9}
-                            <white>- Звук срезки: <green>{10}
-                            
-                            <white>- (Доп.) Глайдер: <green>{11}
-                            """,
+                            Messages.ITEM_EDITOR_EQUIPMENT_CURRENT,
                             data.slot(),
                             data.equipSound(),
                             data.assetId().orElse(null),
@@ -291,11 +272,11 @@ public class ItemEditorCommand extends JustHelperCommand {
         return new LineCommand("profile")
                 .run(context -> itemResolver(item -> {
                     var profile = item.get(DataComponents.PROFILE);
-                    if (profile == null) return JustHelperCommand.feedback("<#FF6467>Профиль предмета не задан!");
-                    JustHelperCommand.feedback("<aqua>ⓘ<white> Профиль предмета:");
+                    if (profile == null) return JustHelperCommand.feedback(Messages.ITEM_EDITOR_PROFILE_NOT_SET);
+                    JustHelperCommand.feedback(Messages.ITEM_EDITOR_PROFILE);
                     JustHelperCommand.feedback("");
                     profile.partialProfile().properties().forEach((k, v) -> JustHelperCommand.feedback(
-                            " • <aqua>{0}<white> = <aqua>{1}",
+                            Messages.ITEM_EDITOR_PROFILE_FORMAT,
                             TextUtils.copyValue(k),
                             TextUtils.copyValue(v == null ? "null" : v.value())
                     ));
@@ -305,7 +286,6 @@ public class ItemEditorCommand extends JustHelperCommand {
     }
 
     private LiteralArgumentBuilder<ClientSuggestionProvider> modifierBranch() {
-
         var buildContext = MojangUtils.createBuildContext();
 
         var operationArg = new ReferenceArgumentType<>(
@@ -322,7 +302,7 @@ public class ItemEditorCommand extends JustHelperCommand {
                 .arg("name", IdentifierArgument.id())
                 .arg("amount", DoubleArgumentType.doubleArg())
                 .arg("operation", operationArg)
-                .arg("slot", ReferenceArgumentType.ofEnums( true, EquipmentSlotGroup.values() ))
+                .arg("slot", ReferenceArgumentType.ofEnums(true, EquipmentSlotGroup.values()))
                 .run(context -> itemResolver(item -> {
                     var attribute = MojangUtils.getResource(context, "attribute", Registries.ATTRIBUTE);
                     var name = MojangUtils.getId(context, "name");
@@ -338,7 +318,7 @@ public class ItemEditorCommand extends JustHelperCommand {
                     );
                     item.set(DataComponents.ATTRIBUTE_MODIFIERS, modifiers);
                     return JustHelperCommand.feedback(1,
-                            "<green>Добавлен атрибут <white><tr:'{0}'>/{1}",
+                            Messages.ITEM_EDITOR_ATTRIBUTE_ADDED,
                             attribute.value().getDescriptionId(),
                             TextUtils.copyValue(name)
                     );
@@ -355,7 +335,7 @@ public class ItemEditorCommand extends JustHelperCommand {
                     var newModificators = ItemAttributeModifiers.EMPTY;
                     for (var entry : modifiers.modifiers()) {
                         var modifier = entry.modifier();
-                        if ( !entry.attribute().is(attribute.key()) ) {
+                        if (!entry.attribute().is(attribute.key())) {
                             newModificators = newModificators.withModifierAdded(
                                     entry.attribute(), modifier, entry.slot()
                             );
@@ -364,12 +344,12 @@ public class ItemEditorCommand extends JustHelperCommand {
                         removed++;
                     }
                     if (removed == 0) return JustHelperCommand.feedback(
-                            "<yellow>Модификаторы атрибута <white><tr:'{0}'><yellow> не найдены!",
+                            Messages.ITEM_EDITOR_ATTRIBUTE_MODIFIER_NOT_SET,
                             attribute.value().getDescriptionId()
                     );
                     item.set(DataComponents.ATTRIBUTE_MODIFIERS, newModificators);
                     return JustHelperCommand.feedback(1,
-                            "<green>Удалено <white>{0}<green> модификаторов атрибута <white><tr:'{1}'>",
+                            Messages.ITEM_EDITOR_ATTRIBUTE_MODIFIER_DELETED,
                             removed,
                             attribute.value().getDescriptionId()
                     );
@@ -384,7 +364,7 @@ public class ItemEditorCommand extends JustHelperCommand {
                     var newModificators = ItemAttributeModifiers.EMPTY;
                     for (var entry : modifiers.modifiers()) {
                         var modifier = entry.modifier();
-                        if ( !entry.attribute().is(attribute.key()) || !modifier.id().equals(name)) {
+                        if (!entry.attribute().is(attribute.key()) || !modifier.id().equals(name)) {
                             newModificators = newModificators.withModifierAdded(
                                     entry.attribute(), modifier, entry.slot()
                             );
@@ -394,12 +374,12 @@ public class ItemEditorCommand extends JustHelperCommand {
                         break;
                     }
                     if (!removed) return JustHelperCommand.feedback(
-                            "<yellow>Атрибут <white><tr:'{0}'>/{1}<yellow> не найден!",
+                            Messages.ITEM_EDITOR_ATTRIBUTE_NOT_SET,
                             attribute.value().getDescriptionId(), name
                     );
                     item.set(DataComponents.ATTRIBUTE_MODIFIERS, newModificators);
                     return JustHelperCommand.feedback(1,
-                            "<green>Удален атрибут <white><tr:'{0}'>/{1}",
+                            Messages.ITEM_EDITOR_ATTRIBUTE_DELETED,
                             attribute.value().getDescriptionId(),
                             name
                     );
@@ -409,14 +389,14 @@ public class ItemEditorCommand extends JustHelperCommand {
         var list = new LineCommand("list")
                 .run(context -> itemResolver(item -> {
                     var modifiers = item.get(DataComponents.ATTRIBUTE_MODIFIERS);
-                    if (modifiers == null) return JustHelperCommand.feedback("<#FF6467>Модификаторы не найдены!");
-                    JustHelperCommand.feedback("<yellow>⏷ <white>Список модификаторов:");
+                    if (modifiers == null) return JustHelperCommand.feedback(Messages.ITEM_EDITOR_ATTRIBUTE_MODIFIERS_NOT_SET);
+                    JustHelperCommand.feedback(Messages.ITEM_EDITOR_ATTRIBUTE_MODIFIERS);
                     final var messagesMap = new HashMap<Holder<Attribute>, List<Component>>();
                     modifiers.modifiers().forEach(entry -> {
                         var modifier = entry.modifier();
                         var messages = messagesMap.computeIfAbsent(entry.attribute(), k -> new ArrayList<>());
                         var message = TextUtils.minimessage(
-                                "    - <yellow>{0} <white>{1} <gold>{2} {3}",
+                                Messages.ITEM_EDITOR_ATTRIBUTE_MODIFIER_FORMAT,
                                 TextUtils.copyValue(modifier.id()),
                                 modifier.amount(),
                                 operationArg.getKeyOrDefault(modifier.operation(), "?"),
@@ -426,7 +406,7 @@ public class ItemEditorCommand extends JustHelperCommand {
                     });
                     messagesMap.forEach((k, v) -> {
                         JustHelperCommand.feedback(
-                                "  • <hover:show_text:'<tr:chat.copy> {1}'><click:copy_to_clipboard:'{1}'><aqua><tr:'{0}'>",
+                                Messages.ITEM_EDITOR_ATTRIBUTE_MODIFIER_MESSAGE_FORMAT,
                                 k.value().getDescriptionId(),
                                 k.unwrapKey().orElseThrow().identifier()
                         );
@@ -440,7 +420,6 @@ public class ItemEditorCommand extends JustHelperCommand {
     }
 
     private LiteralArgumentBuilder<ClientSuggestionProvider> tagBranch() {
-
         var add = new LineCommand("add")
                 .arg("key", new ValidStringArgumentType())
                 .arg("value", StringArgumentType.greedyString())
@@ -450,7 +429,7 @@ public class ItemEditorCommand extends JustHelperCommand {
                     var tags = getBukkitTags(item);
                     tags.put(TAG_NAMESPACE + key, StringTag.valueOf(value));
                     setBukkitTags(tags, item);
-                    return JustHelperCommand.feedback(1, "<green>Добавлен тег <white>'{0}'", key);
+                    return JustHelperCommand.feedback(1, Messages.ITEM_EDITOR_TAGS_ADDED, key);
                 }))
                 .build();
 
@@ -459,17 +438,18 @@ public class ItemEditorCommand extends JustHelperCommand {
                 .run(context -> itemResolver(item -> {
                     var key = ReferenceArgumentType.<String>getReference(context, "key");
                     var tags = getBukkitTags(item);
-                    if (!tags.contains(TAG_NAMESPACE + key)) return JustHelperCommand.feedback("<#FF6467>Тег <white>{0} <#FF6467>не найден!", key);
+                    if (!tags.contains(TAG_NAMESPACE + key))
+                        return JustHelperCommand.feedback(Messages.ITEM_EDITOR_TAGS_NOT_SET, key);
                     tags.remove(TAG_NAMESPACE + key);
                     setBukkitTags(tags, item);
-                    return JustHelperCommand.feedback(1, "<green>Тег <white>{0}<green> удален!", key);
+                    return JustHelperCommand.feedback(1, Messages.ITEM_EDITOR_TAGS_DELETED, key);
                 }))
                 .build();
 
         var list = new LineCommand("list")
                 .run(context -> itemResolver(item -> {
                     var tags = getBukkitTags(item);
-                    JustHelperCommand.feedback("\n<yellow>ⓘ<white> Установленные теги предмета:\n");
+                    JustHelperCommand.feedback(Messages.ITEM_EDITOR_TAGS);
                     for (String keyRaw : tags.keySet()) {
                         if (!keyRaw.startsWith(TAG_NAMESPACE)) continue;
                         var key = keyRaw.substring(TAG_NAMESPACE.length());
@@ -477,7 +457,7 @@ public class ItemEditorCommand extends JustHelperCommand {
                         var shortValue = value;
                         if (shortValue.length() > 15) shortValue = shortValue.substring(0, 15) + "...";
                         JustHelperCommand.feedback(1,
-                                " <yellow>● <white>{0}<reset> <yellow>= <click:copy_to_clipboard:'{2}'><hover:show_text:'<tr:chat.copy>\n{2}'><white>{1}",
+                                Messages.ITEM_EDITOR_TAGS_FORMAT,
                                 TextUtils.copyValue(key),
                                 shortValue,
                                 value
@@ -499,7 +479,7 @@ public class ItemEditorCommand extends JustHelperCommand {
                     }
                     setBukkitTags(tags, item);
                     return JustHelperCommand.feedback(1,
-                            "<green>Очищено {0} тегов",
+                            Messages.ITEM_EDITOR_TAGS_CLEARED,
                             count
                     );
                 }))
@@ -516,7 +496,7 @@ public class ItemEditorCommand extends JustHelperCommand {
                         tagsClipboard.put(key, value);
                     }
                     return JustHelperCommand.feedback(
-                            "<green>Скопировано <white>{0}<green> тегов в буфер. Для установки в предмет используйте /{1} tag paste",
+                            Messages.ITEM_EDITOR_TAGS_PASTE,
                             tagsClipboard.size(),
                             this.name
                     );
@@ -527,10 +507,10 @@ public class ItemEditorCommand extends JustHelperCommand {
                 .run(context -> itemResolver(item -> {
                     var tags = getBukkitTags(item);
                     for (String key : tagsClipboard.keySet())
-                        tags.put(TAG_NAMESPACE + key, StringTag.valueOf( tagsClipboard.get(key) ));
+                        tags.put(TAG_NAMESPACE + key, StringTag.valueOf(tagsClipboard.get(key)));
                     setBukkitTags(tags, item);
                     return JustHelperCommand.feedback(1,
-                            "<green>Установлено <white>{0}<green> тегов в предмет",
+                            Messages.ITEM_EDITOR_TAGS_SET,
                             tagsClipboard.size()
                     );
                 }))
@@ -539,18 +519,19 @@ public class ItemEditorCommand extends JustHelperCommand {
         return JustHelperCommands.literal("tag").then(add).then(remove).then(list).then(clear).then(copy).then(paste);
     }
 
-    private static int itemResolver(ItemStackProvider provider) {
+    public static int itemResolver(ItemStackProvider provider) {
         var player = Minecraft.getInstance().player;
 
         if (player == null) return 0;
         var item = player.getItemBySlot(EquipmentSlot.MAINHAND);
-        if (item.isEmpty()) return JustHelperCommand.feedback("<#FF6467>Item+ >> Для редактирования предмета вы должны держать его в ведущей руке.");
+        if (item.isEmpty())
+            return JustHelperCommand.feedback(Messages.ITEM_EDITOR_ITEM_NEED_HOLD);
         int result;
         try {
             result = provider.provide(item);
         } catch (Throwable t) {
             JustHelperClient.LOGGER.printStackTrace(t, JustHelperClient.JustHelperLogger.LogType.ERROR);
-            return JustHelperCommand.feedback("<#FF6467>Item+ >> Ошибка выполнения: " + t.getMessage());
+            return JustHelperCommand.feedback(Messages.ITEM_EDITOR_ITEM_ERROR + t.getMessage());
         }
         if (result > 0) {
             player.swing(InteractionHand.MAIN_HAND, false);
@@ -569,7 +550,9 @@ public class ItemEditorCommand extends JustHelperCommand {
             var values = customData.copyTag().get("PublicBukkitValues");
             if (values == null) return new CompoundTag();
             return (CompoundTag) values;
-        } catch (Throwable t) { return new CompoundTag(); }
+        } catch (Throwable t) {
+            return new CompoundTag();
+        }
     }
 
     private static void setBukkitTags(CompoundTag tags, ItemStack item) {
@@ -580,75 +563,5 @@ public class ItemEditorCommand extends JustHelperCommand {
 
     public interface ItemStackProvider {
         int provide(ItemStack item) throws CommandSyntaxException;
-    }
-
-    public static class ItemDisplayEditorScreen extends Screen {
-
-        private String nameField;
-        private String loreField;
-        private EditBox nameEditBox = null;
-        private MultiLineEditBox loreEditBox = null;
-
-        protected ItemDisplayEditorScreen(ItemStack item) {
-            super(Component.literal("Редактирование отображения предмета"));
-            var lore = item.get(DataComponents.LORE);
-
-            var lines = lore == null ? List.<Component>of() : lore.lines();
-            StringBuilder minimessage = new StringBuilder();
-            for (Component line : lines) {
-                minimessage.append( TextUtils.toMiniMessage(line) ).append('\n');
-            }
-            loreField = minimessage.toString();
-            nameField = TextUtils.toMiniMessage( item.getOrDefault(DataComponents.CUSTOM_NAME, item.getItemName()) );
-        }
-
-        @Override
-        protected void init() {
-            if (loreEditBox != null) loreField = loreEditBox.getValue();
-            if (nameEditBox != null) nameField = nameEditBox.getValue();
-
-            var font = Minecraft.getInstance().font;
-
-            var title = new StringWidget(this.title, font);
-            title.setPosition( width / 2 - font.width(this.title) / 2, 10 );
-
-            nameEditBox = new EditBox(font, 60, 30, Component.literal("Название"));
-            nameEditBox.setX(60);
-            nameEditBox.setY(30);
-            nameEditBox.setWidth(width - 120);
-            nameEditBox.setHeight(20);
-            nameEditBox.setMaxLength(Integer.MAX_VALUE);
-            nameEditBox.setValue(nameField);
-            var nameTitle = new StringWidget(Component.literal("Название"), font);
-            nameTitle.setPosition( nameEditBox.getX(), nameEditBox.getY() - 10 );
-
-            loreEditBox = new MultiLineEditBox.Builder().setX(60).setY(nameEditBox.getY() + nameEditBox.getHeight() + 20)
-                    .build(font, width - 120, height - 120, Component.literal("Описание"));
-            loreEditBox.setValue(loreField);
-            var loreTitle = new StringWidget(Component.literal("Описание"), font);
-            loreTitle.setPosition( loreEditBox.getX(), loreEditBox.getY() - 10 );
-
-            var ok = Button.builder(Component.literal("Применить"), button -> itemResolver(item -> {
-                var list = new ArrayList<Component>();
-                var content = loreEditBox.getValue();
-                for (String line : content.split("\n")) list.add( TextUtils.minimessage(line) );
-                item.set(DataComponents.LORE, new ItemLore(list));
-                item.set(DataComponents.CUSTOM_NAME, TextUtils.minimessage(nameEditBox.getValue()) );
-                Minecraft.getInstance().setScreen(null);
-                return 1;
-            })).pos(width / 2 + 5, loreEditBox.getHeight() + loreEditBox.getY() + 10).width(100).build();
-
-            var cancel = Button.builder(Component.literal("Отмена"), button -> {
-                Minecraft.getInstance().setScreen(null);
-            }).pos(width / 2 - 105, loreEditBox.getHeight() + loreEditBox.getY() + 10).width(100).build();
-
-            addRenderableWidget(title);
-            addRenderableWidget(nameTitle);
-            addRenderableWidget(nameEditBox);
-            addRenderableWidget(loreTitle);
-            addRenderableWidget(loreEditBox);
-            addRenderableWidget(ok);
-            addRenderableWidget(cancel);
-        }
     }
 }

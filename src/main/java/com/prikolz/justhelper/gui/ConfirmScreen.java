@@ -9,7 +9,7 @@ import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import org.jspecify.annotations.Nullable;
-import ru.zoga_com.jmcd.widgets.TransparentButton;
+import ru.zoga_com.jmcd.ui.widgets.TransparentButton;
 
 public class ConfirmScreen extends Screen {
     public final String title;

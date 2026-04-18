@@ -5,6 +5,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.prikolz.justhelper.DevelopmentWorld;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
+import ru.zoga_com.jmcd.Messages;
 
 public class DescribeCommand extends JustHelperCommand {
     public DescribeCommand() {
@@ -28,11 +29,11 @@ public class DescribeCommand extends JustHelperCommand {
     }
 
     public static int showFloor(int floor) {
-        if (!DevelopmentWorld.isActive()) return JustHelperCommand.feedback("<sprite:items:item/command_block_minecart><#FF6467> Доступно только в мире кода!");
+        if (!DevelopmentWorld.isActive()) return JustHelperCommand.feedback(Messages.ONLY_ON_DEV);
         String text = DevelopmentWorld.describes.describes.get(floor);
-        if (text == null) return JustHelperCommand.feedback("<#FF6467>Описание этажа {0} не найдено", floor);
+        if (text == null) return JustHelperCommand.feedback(Messages.SHOW_FLOOR_DESCRIPTION_NOT_FOUND, floor);
         JustHelperCommand.feedback(
-                "<yellow>{0}{2}<dark_gray> |> <click:suggest_command:'{3}'><hover:show_text:'{4}'><white>{1}",
+                Messages.SHOW_FLOOR,
                 floor,
                 text,
                 floor < 10 ? " " : "",
@@ -43,17 +44,19 @@ public class DescribeCommand extends JustHelperCommand {
     }
 
     public static int showAll() {
-        if (!DevelopmentWorld.isActive()) return JustHelperCommand.feedback("<sprite:items:item/command_block_minecart><#FF6467> Доступно только в мире кода!");
-        JustHelperCommand.feedback("<yellow>v <white>Описания этажей:");
+        if (!DevelopmentWorld.isActive()) return JustHelperCommand.feedback(Messages.ONLY_ON_DEV);
+
+        JustHelperCommand.feedback(Messages.SHOW_FLOOR_ALL_BEFORE);
         DevelopmentWorld.describes.describes.keySet().forEach(DescribeCommand::showFloor);
-        JustHelperCommand.feedback("<yellow>^");
+        JustHelperCommand.feedback(Messages.SHOW_FLOOR_ALL_AFTER);
         return 1;
     }
 
     public static int execute(int floor, String describe) {
-        if (!DevelopmentWorld.isActive()) return JustHelperCommand.feedback("<yellow>Доступно только в мире кода!");
+        if (!DevelopmentWorld.isActive()) return JustHelperCommand.feedback(Messages.ONLY_ON_DEV);
+
         DevelopmentWorld.describes.describe(floor, describe);
-        JustHelperCommand.feedback("<green>Установлено описание <white>{0} <green>этажа:<white> {1}", floor, describe);
+        JustHelperCommand.feedback(Messages.DESCRIBE, floor, describe);
         return 1;
     }
 }

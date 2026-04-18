@@ -11,7 +11,8 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ServerboundSetCreativeModeSlotPacket;
 import net.minecraft.world.item.ItemStack;
-import ru.zoga_com.jmcd.widgets.TransparentButton;
+import ru.zoga_com.jmcd.Messages;
+import ru.zoga_com.jmcd.ui.widgets.TransparentButton;
 
 public class TextEditorScreen extends Screen {
     private final Text.ParsingType currentFormat;
@@ -53,7 +54,7 @@ public class TextEditorScreen extends Screen {
                     ItemStack newTextItem = JustMCUtils.setTextValue(minecraft.player.getMainHandItem(), this.currentContent);
                     minecraft.player.getInventory().setItem(minecraft.player.getInventory().getSelectedSlot(), newTextItem);
                     minecraft.getConnection().send(new ServerboundSetCreativeModeSlotPacket(36 + minecraft.player.getInventory().getSelectedSlot(), newTextItem));
-                    JustHelperCommand.feedback("<sprite:gui:icon/checkmark><#9AFF1F> Текст обновлен");
+                    JustHelperCommand.feedback(Messages.TEXT_UPDATED);
                     minecraft.setScreen(null);
                 }
         );

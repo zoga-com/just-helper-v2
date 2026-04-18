@@ -27,7 +27,7 @@ public class ColorArgumentType implements ArgumentType<Integer> {
                 isHex = true;
                 c = read(reader, hex);
             }
-            if ( !isHex && (c > '9' || hex.length() > 3) ) isHex = true;
+            if (!isHex && (c > '9' || hex.length() > 3)) isHex = true;
             if (c == ' ' && !isHex) return parseRGB(reader, hex + ' ');
             if (Character.digit(c, 16) == -1) throw ILLEGAL_CHAR.create(c);
             hex = hex + c;
@@ -39,7 +39,7 @@ public class ColorArgumentType implements ArgumentType<Integer> {
         var rgb = new int[]{0, 0, 0};
         rgb[0] = Integer.parseInt(result.substring(0, result.length() - 1));
         if (rgb[0] > 255) throw ILLEGAL_RGB_VALUE.create(rgb[0]);
-        for(int i = 0; i < 2; i++) {
+        for (int i = 0; i < 2; i++) {
             if (!reader.canRead()) throw NOT_COMPLETE_RGB_VALUE.create(rgb[i]);
             if (i > 0 && reader.read() != ' ') throw NOT_COMPLETE_RGB_VALUE.create(rgb[i]);
             if (!reader.canRead()) throw NOT_COMPLETE_RGB_VALUE.create(rgb[i]);

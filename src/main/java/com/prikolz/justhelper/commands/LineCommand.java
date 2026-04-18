@@ -8,6 +8,7 @@ import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.prikolz.justhelper.JustHelperClient;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
+import ru.zoga_com.jmcd.Messages;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +25,7 @@ public class LineCommand {
     public LineCommand(String name) {
         this.main = JustHelperCommands.literal(name);
         this.onRunError = (context, error) -> {
-            JustHelperCommand.feedback("<#FF6467>При выполнении команды произошла ошибка: {0}\nПодробнее /justhelper logs", error.getMessage());
+            JustHelperCommand.feedback(Messages.LINE_COMMAND_ERROR, error.getMessage());
             JustHelperClient.LOGGER.printStackTrace(error);
             return 0;
         };

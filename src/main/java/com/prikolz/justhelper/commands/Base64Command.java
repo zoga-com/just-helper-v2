@@ -4,6 +4,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.prikolz.justhelper.util.TextUtils;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
+import ru.zoga_com.jmcd.Messages;
 
 public class Base64Command extends JustHelperCommand {
     public Base64Command() {
@@ -18,10 +19,7 @@ public class Base64Command extends JustHelperCommand {
                 .run(context -> {
                     var text = StringArgumentType.getString(context, "text");
                     var base64 = TextUtils.encodeBase64(text);
-                    return JustHelperCommand.feedback(
-                            "<#9AFF1F>Закодированный текст base64:<white>\n{0}",
-                            TextUtils.copyValue(base64)
-                    );
+                    return JustHelperCommand.feedback(Messages.BASE64_ENCODED, TextUtils.copyValue(base64));
                 })
                 .build();
 
@@ -30,10 +28,7 @@ public class Base64Command extends JustHelperCommand {
                 .run(context -> {
                     var base64 = StringArgumentType.getString(context, "base64");
                     var text = TextUtils.decodeBase64(base64);
-                    return JustHelperCommand.feedback(
-                            "<#9AFF1F>Декодированный текст base64:<white>\n{0}",
-                            TextUtils.copyValue(text)
-                    );
+                    return JustHelperCommand.feedback(Messages.BASE64_DECODED, TextUtils.copyValue(text));
                 })
                 .build();
 

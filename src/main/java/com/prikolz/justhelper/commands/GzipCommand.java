@@ -5,6 +5,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.prikolz.justhelper.util.JustMCUtils;
 import com.prikolz.justhelper.util.TextUtils;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
+import ru.zoga_com.jmcd.Messages;
 
 public class GzipCommand extends JustHelperCommand {
     public GzipCommand() {
@@ -21,11 +22,11 @@ public class GzipCommand extends JustHelperCommand {
                     try {
                         var result = JustMCUtils.gzipCompress(text);
                         return JustHelperCommand.feedback(
-                                "<#9AFF1F>Сжатый текст gzip:<white>\n{0}",
+                                Messages.GZIP_COMPRESS,
                                 TextUtils.copyValue(result)
                         );
                     } catch (Throwable e) {
-                        return JustHelperCommand.feedback("<#FF6467>Ошибка сжатия: {0}", e.getMessage());
+                        return JustHelperCommand.feedback(Messages.GZIP_COMPRESS_ERROR, e.getMessage());
                     }
                 })
                 .build();
@@ -37,11 +38,11 @@ public class GzipCommand extends JustHelperCommand {
                     try {
                         var text = JustMCUtils.gzipDecompress(gzip);
                         return JustHelperCommand.feedback(
-                                "<#9AFF1F>Распакованный текст gzip:<white>\n{0}",
+                                Messages.GZIP_DECOMPRESS,
                                 TextUtils.copyValue(text)
                         );
                     } catch (Throwable t) {
-                        return JustHelperCommand.feedback("<#FF6467>Ошибка распаковки: {0}", t.getMessage());
+                        return JustHelperCommand.feedback(Messages.DECOMPRESS_ERROR, t.getMessage());
                     }
                 })
                 .build();

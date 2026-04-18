@@ -10,7 +10,7 @@ public class FileUtils {
     }
 
     public static File getConfigFolder() {
-        return new File(getGameFolder().getPath() + "/config/justhelper");
+        return new File(getGameFolder().getPath() + "/config/jmcd");
     }
 
     public static File getWorldFolder(String uuid) {

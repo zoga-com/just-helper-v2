@@ -6,6 +6,7 @@ import com.prikolz.justhelper.JustHelperClient;
 import com.prikolz.justhelper.util.JustMCUtils;
 import com.prikolz.justhelper.util.TextUtils;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
+import ru.zoga_com.jmcd.Messages;
 
 public class ZlibCommand extends JustHelperCommand{
     public ZlibCommand() {
@@ -20,7 +21,7 @@ public class ZlibCommand extends JustHelperCommand{
                 .run(context -> {
                     var string = StringArgumentType.getString(context, "string");
                     var compressed = JustMCUtils.zlibCompress(string);
-                    return JustHelperCommand.feedback("<#9AFF1F>Сжатый текст zlib:<white> {0}", TextUtils.copyValue(compressed));
+                    return JustHelperCommand.feedback(Messages.ZLIB_COMPRESS, TextUtils.copyValue(compressed));
                 });
 
         var decompressBranch = new LineCommand("decompress")
@@ -29,10 +30,10 @@ public class ZlibCommand extends JustHelperCommand{
                     var string = StringArgumentType.getString(context, "zlib");
                     try {
                         var decompressed = JustMCUtils.zlibDecompress(string);
-                        return JustHelperCommand.feedback("<#9AFF1F>Распакованный текст zlib:<white> {0}", TextUtils.copyValue(decompressed));
+                        return JustHelperCommand.feedback(Messages.ZLIB_DECOMPRESS, TextUtils.copyValue(decompressed));
                     } catch (Throwable t) {
                         JustHelperClient.LOGGER.printStackTrace(t, JustHelperClient.JustHelperLogger.LogType.ERROR);
-                        return JustHelperCommand.feedback("<#FF6467>Ошибка распаковки: {0}", t.getMessage());
+                        return JustHelperCommand.feedback(Messages.DECOMPRESS_ERROR, t.getMessage());
                     }
                 });
 

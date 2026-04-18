@@ -1,4 +1,4 @@
-package ru.zoga_com.jmcd.widgets;
+package ru.zoga_com.jmcd.ui.widgets;
 
 import com.prikolz.justhelper.JustHelperClient;
 import com.prikolz.justhelper.util.TextUtils;

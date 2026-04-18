@@ -1,6 +1,8 @@
 package com.prikolz.justhelper;
 
-import com.google.gson.*;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import com.prikolz.justhelper.config.ChatParameters;
 import com.prikolz.justhelper.config.CodeBlockNames;
 import com.prikolz.justhelper.config.CommandParameters;
@@ -112,7 +114,9 @@ public class Config {
             }
     );
 
-    public static Config get() { return JustHelperClient.CONFIG; }
+    public static Config get() {
+        return JustHelperClient.CONFIG;
+    }
 
     public List<String> read() {
         JustHelperClient.LOGGER.info("Reading config...");
@@ -127,7 +131,8 @@ public class Config {
         try {
             JsonObject json = GSON.fromJson(GSON.newJsonReader(new FileReader(configFile)), JsonObject.class);
             for (var parameter : parameters) parameter.read(json, logger);
-            if (logger.configWasUpdated) Files.writeString(configFile.toPath(), GSON.toJson(json), StandardCharsets.UTF_8);
+            if (logger.configWasUpdated)
+                Files.writeString(configFile.toPath(), GSON.toJson(json), StandardCharsets.UTF_8);
         } catch (Throwable t) {
             logger.log("[E] Fail to read config file: " + t.getMessage());
         }
@@ -147,7 +152,7 @@ public class Config {
 
     public static String getJSON() {
         try {
-            return Files.readString( new File(FileUtils.getConfigFolder().getPath() + "/config.json").toPath() );
+            return Files.readString(new File(FileUtils.getConfigFolder().getPath() + "/config.json").toPath());
         } catch (Throwable t) {
             return "Error: " + t.getMessage();
         }
@@ -295,10 +300,13 @@ public class Config {
             A resolve(T value, ConfigLogger logger);
         }
     }
+
     public static class ConfigLogger {
         public final List<String> logs = new ArrayList<>();
         public boolean configWasUpdated = false;
 
-        public void log(String line) { logs.add(line); }
+        public void log(String line) {
+            logs.add(line);
+        }
     }
 }
