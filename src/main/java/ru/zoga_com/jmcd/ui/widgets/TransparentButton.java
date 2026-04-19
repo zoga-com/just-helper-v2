@@ -62,6 +62,14 @@ public class TransparentButton extends AbstractWidget {
     @Override
     protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {}
 
+    public void runCallback() {
+        try {
+            clickCallback.run();
+        } catch (Exception e) {
+            JustHelperClient.LOGGER.error("TransparentButton onClick callback error: {}", e.getMessage());
+        }
+    }
+
     private Color getAccentColor() {
         return this.isHovered() ? this.hoverColor : this.mainColor;
     }

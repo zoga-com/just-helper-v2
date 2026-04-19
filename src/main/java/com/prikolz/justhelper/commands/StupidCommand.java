@@ -4,8 +4,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
-
-import java.util.List;
+import ru.zoga_com.jmcd.ui.screens.ConfigScreen;
 
 public class StupidCommand extends JustHelperCommand {
     public StupidCommand() {
@@ -22,9 +21,10 @@ public class StupidCommand extends JustHelperCommand {
             connection.sendChat("!люди, есть " + result + " рубля?");
             return 1;
         })).executes(context -> {
-            var connection = Minecraft.getInstance().getConnection();
-            if (connection == null) return 0;
-            connection.sendChat("!люди, есть 2 рубля?");
+            Minecraft.getInstance().schedule(() -> Minecraft.getInstance().setScreen(new ConfigScreen()));
+//            var connection = Minecraft.getInstance().getConnection();
+//            if (connection == null) return 0;
+//            connection.sendChat("!люди, есть 2 рубля?");
             return 1;
         });
     }
