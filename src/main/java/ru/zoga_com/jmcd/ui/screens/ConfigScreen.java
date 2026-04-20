@@ -20,7 +20,7 @@ public class ConfigScreen extends Screen {
         title.setPosition(width / 2 - title.getWidth() / 2, 5);
 
         var config = new ConfigWidget(
-                20, 20, this.width - 40, this.height - 60
+                (int) (this.width / 3.5), 20, (int) (this.width - (this.width / 3.5) - 40), this.height - 60
         );
 
         var saveButton = new TransparentButton(

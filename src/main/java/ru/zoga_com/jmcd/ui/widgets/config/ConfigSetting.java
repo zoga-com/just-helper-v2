@@ -8,5 +8,6 @@ public class ConfigSetting<T> {
     public ConfigSetting(String title, String description, T value) {
         this.title = title;
         this.description = description;
+        this.value = value;
     }
 }
