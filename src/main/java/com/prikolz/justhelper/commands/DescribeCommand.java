@@ -10,7 +10,7 @@ import ru.zoga_com.jmcd.Messages;
 public class DescribeCommand extends JustHelperCommand {
     public DescribeCommand() {
         super("describe");
-        this.description = "[Этаж] [Текст] <gray>- Добавляет подпись(название) этажу. Название будет отображается в мире через визуализатор текста, а так-же в командах /find и /floor.";
+        this.description = "[Этаж] [Текст] <gray>- Добавляет подпись (название) этажу. Название будет отображается в мире через визуализатор текста, а так-же в командах /find и /floor.";
     }
 
     @Override

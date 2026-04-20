@@ -1,7 +1,7 @@
 package com.prikolz.justhelper.dev.values;
 
-import com.prikolz.justhelper.util.TextUtils;
 import com.prikolz.justhelper.util.Pair;
+import com.prikolz.justhelper.util.TextUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -35,7 +35,7 @@ public class Array extends DevValue {
                 var valuesTag = new ListTag();
                 for (var entry : value.values) {
                     if (entry.registry == null) continue;
-                    valuesTag.add( DevValueRegistry.toNBT(entry) );
+                    valuesTag.add(DevValueRegistry.toNBT(entry));
                 }
                 nbt.put("values", valuesTag);
             }
@@ -54,10 +54,10 @@ public class Array extends DevValue {
         for (var entry : values) {
             var key = entry.getMiniVersion();
             if (key.length() > 150) key = key.substring(0, 150) + "...";
-            lines.add( TextUtils.minimessage(" <white><italic:false>{0}", key) );
+            lines.add(TextUtils.minimessage(" <white><italic:false>{0}", key));
             line++;
             if (line > 21) {
-                lines.add( TextUtils.minimessage("<gray>...") );
+                lines.add(TextUtils.minimessage("<gray>..."));
                 break;
             }
         }
@@ -73,7 +73,7 @@ public class Array extends DevValue {
             i++;
             if (i < this.values.size()) values.append(", ");
         }
-        return List.of( Pair.of("values", values.toString()) );
+        return List.of(Pair.of("values", values.toString()));
     }
 
     @Override
@@ -81,7 +81,7 @@ public class Array extends DevValue {
         if (values.isEmpty()) return "[]";
         StringBuilder values = new StringBuilder();
         for (var value : this.values) {
-            values.append(", ").append( value.getMiniVersion() );
+            values.append(", ").append(value.getMiniVersion());
         }
         return "[" + values.substring(2) + "]";
     }
