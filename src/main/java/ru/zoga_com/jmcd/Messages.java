@@ -75,4 +75,6 @@ public class Messages {
     public static String ZLIB_DECOMPRESS = "<#9AFF1F>Распакованный текст zlib:<white> {0}";
     public static String CONFIG_UPDATED = "<sprite:gui:icon/checkmark><#9AFF1F> Конфиг обновлен";
     public static String TEXT_UPDATED = "<sprite:gui:icon/checkmark><#9AFF1F> Текст обновлен";
+    public static String PREVIEW_BUTTON_TRUE = "<white>Предсмотр: <#9AFF1F>Вкл";
+    public static String PREVIEW_BUTTON_FALSE = "<white>Предсмотр: <#FF6467>Выкл";
 }

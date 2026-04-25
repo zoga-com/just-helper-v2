@@ -12,24 +12,31 @@ import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
+import java.util.function.Supplier;
 
 public class TransparentButton extends AbstractWidget {
     private final Component text;
+    private final Component falseText;
     private final Runnable clickCallback;
     private final Color mainColor;
     private final Color hoverColor;
     private final Color mainTextColor;
     private final Color hoverTextColor;
+    private Supplier<Boolean> changingCondition = () -> true;
 
     public TransparentButton(Component title, int x, int y, int width, int height, int transparentLevel, Runnable callback) {
-        this(title, x, y, width, height, new Color(0, 0, 0, transparentLevel), new Color(33, 188, 255, transparentLevel), new Color(255, 255, 255), new Color(255, 255, 85), TextUtils.minimessage(""), callback);
+        this(title, null, () -> true, x, y, width, height, new Color(0, 0, 0, transparentLevel), new Color(33, 188, 255, transparentLevel), new Color(255, 255, 255), new Color(255, 255, 85), TextUtils.minimessage(""), callback);
+    }
+
+    public TransparentButton(Component title, Component titleIfFalse, Supplier<Boolean> condition, int x, int y, int width, int height, int transparentLevel, Runnable callback) {
+        this(title, titleIfFalse, condition, x, y, width, height, new Color(0, 0, 0, transparentLevel), new Color(33, 188, 255, transparentLevel), new Color(255, 255, 255), new Color(255, 255, 85), TextUtils.minimessage(""), callback);
     }
 
     public TransparentButton(Component title, int x, int y, int width, int height, int transparentLevel, Component tooltip, Runnable callback) {
-        this(title, x, y, width, height, new Color(0, 0, 0, transparentLevel), new Color(33, 188, 255, transparentLevel), new Color(255, 255, 255), new Color(255, 255, 85), tooltip, callback);
+        this(title, null, () -> true, x, y, width, height, new Color(0, 0, 0, transparentLevel), new Color(33, 188, 255, transparentLevel), new Color(255, 255, 255), new Color(255, 255, 85), tooltip, callback);
     }
 
-    public TransparentButton(Component title, int x, int y, int width, int height, Color defaultColor, Color hoverColor, Color defaultTextColor, Color hoverTextColor, Component tooltip, Runnable callback) {
+    public TransparentButton(Component title, Component titleIfFalse, Supplier<Boolean> condition, int x, int y, int width, int height, Color defaultColor, Color hoverColor, Color defaultTextColor, Color hoverTextColor, Component tooltip, Runnable callback) {
         super(x, y, width, height, Component.empty());
 
         this.text = title;
@@ -38,6 +45,8 @@ public class TransparentButton extends AbstractWidget {
         this.hoverColor = hoverColor;
         this.mainTextColor = defaultTextColor;
         this.hoverTextColor = hoverTextColor;
+        this.falseText = titleIfFalse;
+        this.changingCondition = condition;
 
         this.setTooltip(Tooltip.create(tooltip));
     }
@@ -45,7 +54,7 @@ public class TransparentButton extends AbstractWidget {
     @Override
     protected void renderWidget(GuiGraphics guiGraphics, int i, int j, float f) {
         guiGraphics.fill(getX(), getY(), getX() + this.width, getY() + this.height, this.getAccentColor().getRGB());
-        guiGraphics.drawCenteredString(Minecraft.getInstance().font, text, getX() + (this.width / 2), getY() + (this.height / 2) - (Minecraft.getInstance().font.lineHeight / 2), this.getTextColor().getRGB());
+        guiGraphics.drawCenteredString(Minecraft.getInstance().font, changingCondition.get() ? text : falseText, getX() + (this.width / 2), getY() + (this.height / 2) - (Minecraft.getInstance().font.lineHeight / 2), this.getTextColor().getRGB());
     }
 
     @Override

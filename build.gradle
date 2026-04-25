@@ -41,12 +41,14 @@ dependencies {
 	implementation ("net.kyori:adventure-text-minimessage:4.26.1")
 	implementation ("net.kyori:adventure-text-serializer-gson:4.17.0")
 	implementation ("net.kyori:adventure-text-serializer-legacy:4.17.0")
+	implementation ('net.kyori:adventure-text-serializer-plain:5.0.0')
 	implementation ("net.kyori:adventure-api:4.24.0")
 
 	includeInternal ("net.kyori:adventure-text-minimessage:4.26.1")
 	includeInternal ("net.kyori:adventure-text-serializer-gson:4.17.0")
 	includeInternal ("net.kyori:adventure-text-serializer-legacy:4.17.0")
 	includeInternal ("net.kyori:adventure-api:4.24.0")
+	includeInternal ('net.kyori:adventure-text-serializer-plain:5.0.0')
 }
 
 processResources {

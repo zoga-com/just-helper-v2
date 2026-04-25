@@ -4,8 +4,12 @@ import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.serialization.JsonOps;
 import com.prikolz.justhelper.JustHelperClient;
+import com.prikolz.justhelper.dev.values.Text;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.kyori.adventure.text.serializer.json.JSONComponentSerializer;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.SnbtGrammar;
 import net.minecraft.nbt.Tag;
@@ -21,10 +25,14 @@ public class TextUtils {
     public static final DynamicCommandExceptionType ERROR_INVALID_COMPONENT = new DynamicCommandExceptionType((object) -> Component.translatableEscape("argument.component.invalid", object));
     public static final Grammar<Tag> TAG_PARSER = SnbtGrammar.createParser(NbtOps.INSTANCE);
     public static final CommandArgumentParser<Component> PARSER = TAG_PARSER.withCodec(NbtOps.INSTANCE, TAG_PARSER, ComponentSerialization.CODEC, ERROR_INVALID_COMPONENT);
+    private static final LegacyComponentSerializer LEGACY_COMPONENT_SERIALIZER = LegacyComponentSerializer.legacyAmpersand();
+    private static final PlainTextComponentSerializer PLAIN_TEXT_COMPONENT_SERIALIZER = PlainTextComponentSerializer.plainText();
+    private static final JSONComponentSerializer JSON_COMPONENT_SERIALIZER = JSONComponentSerializer.json();
+    private static final MiniMessage MINI_MESSAGE_SERIALIZER = MiniMessage.miniMessage();
 
     public static Component minimessage(String minimessage, Object... placeholders) {
         String message = handlePlaceholders(0, minimessage, placeholders);
-        var json = GsonComponentSerializer.gson().serialize(MiniMessage.miniMessage().deserialize(message));
+        var json = GsonComponentSerializer.gson().serialize(MINI_MESSAGE_SERIALIZER.deserialize(message));
         try {
             return PARSER.parseForCommands(new StringReader(json));
         } catch (Throwable t) {
@@ -36,7 +44,7 @@ public class TextUtils {
     public static String toMiniMessage(Component component) {
         try {
             var json = ComponentSerialization.CODEC.encodeStart(JsonOps.INSTANCE, component).getOrThrow();
-            return MiniMessage.miniMessage().serialize(GsonComponentSerializer.gson().deserializeFromTree(json));
+            return MINI_MESSAGE_SERIALIZER.serialize(GsonComponentSerializer.gson().deserializeFromTree(json));
         } catch (Throwable t) {
             JustHelperClient.LOGGER.error("Component to minimessage convert error: " + t.getMessage());
         }
@@ -125,5 +133,21 @@ public class TextUtils {
             if(longest.length() < str.getString().length()) longest = str.getString();
         }
         return longest;
+    }
+
+    public static Component serialize(String string, Text.ParsingType parsingType) {
+        try {
+            String message = handlePlaceholders(0, string);
+            String json;
+            switch(parsingType) {
+                case LEGACY -> json = GsonComponentSerializer.gson().serialize(LEGACY_COMPONENT_SERIALIZER.deserialize(message));
+                case JSON -> json = GsonComponentSerializer.gson().serialize(JSON_COMPONENT_SERIALIZER.deserialize(message));
+                case MINI_MESSAGE -> json = GsonComponentSerializer.gson().serialize(MINI_MESSAGE_SERIALIZER.deserialize(message));
+                default -> json = GsonComponentSerializer.gson().serialize(PLAIN_TEXT_COMPONENT_SERIALIZER.deserialize(message));
+            }
+            return PARSER.parseForCommands(new StringReader(json));
+        } catch (Throwable t) {
+            return Component.literal("Component parse error!\n\n" + t.getMessage());
+        }
     }
 }
