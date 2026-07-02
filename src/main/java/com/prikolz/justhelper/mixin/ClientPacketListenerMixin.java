@@ -94,4 +94,9 @@ public class ClientPacketListenerMixin {
         DevelopmentWorld.handleItemStack(packet.contents());
     }
 
+    @Inject(method = "handleLogin", at = @At("TAIL"))
+    public void onLogin(ClientboundLoginPacket clientboundLoginPacket, CallbackInfo ci) {
+        UpdateChecker.onJoinCheckMessage();
+    }
+
 }

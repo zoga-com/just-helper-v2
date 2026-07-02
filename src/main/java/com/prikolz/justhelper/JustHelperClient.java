@@ -96,7 +96,7 @@ public class JustHelperClient implements ClientModInitializer {
         }
 
         private void log(LogType type, String msg, Object ... placeholders) {
-            for (Object o : placeholders) msg = TextUtils.replaceFirst(msg, "{}", o.toString());
+            for (Object o : placeholders) msg = TextUtils.replaceFirst(msg, "{}", o == null ? "null" : o.toString());
             if (cache.size() > CACHE_LIMIT) cache.removeFirst();
             Date currentDate = new Date();
             SimpleDateFormat timeFormat = new SimpleDateFormat("[HH:mm:ss]");

@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.prikolz.justhelper.util.ContextRunnable;
 import com.prikolz.justhelper.util.JustHelperUtils;
 import com.prikolz.justhelper.util.TextUtils;
+import net.minecraft.client.Minecraft;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -31,6 +32,11 @@ public class UpdateChecker {
         if (!Config.get().updateChecker.value) return;
         check((info) -> {
             if (!info.isNew) return;
+            if (Minecraft.getInstance().player == null) {
+                requireCheck = true;
+                return;
+            }
+            JustHelperClient.LOGGER.info("Available new update {}", info.title);
             JustHelperUtils.send(
                     "<green>[↓] <aqua>(JustHelper) <white>Доступно обновление: <green><underlined>{0}</underlined>",
                     "<hover:show_text:'Скачать/Посмотреть изменения'><click:run_command:'/justhelper updates'>{1}",
@@ -85,9 +91,10 @@ public class UpdateChecker {
                 String description = data.get("body").getAsString();
                 var date = LocalDate.parse(version, JustHelperClient.VERSION_DATE_FORMAT);
                 JustHelperClient.LOGGER.info(
-                        "Got latest release info response: version={} title={}",
+                        "Got latest release info response: version={} title={} isNew={}",
                         version,
-                        title
+                        title,
+                        date.isAfter(JustHelperClient.versionDate)
                 );
                 cache = new ReleaseInfo(date.isAfter(JustHelperClient.versionDate), version, title, description);
                 cacheTimestamp = System.currentTimeMillis() + 5 * 60000;

@@ -1,6 +1,6 @@
 package com.prikolz.justhelper.util;
 
-import com.prikolz.justhelper.dev.values.DevValue;
+import com.prikolz.justhelper.JustHelperClient;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.protocol.game.ServerboundSetCreativeModeSlotPacket;

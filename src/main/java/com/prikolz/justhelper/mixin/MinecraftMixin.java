@@ -25,7 +25,6 @@ public class MinecraftMixin {
     public void onSetLevel(ClientLevel clientLevel, CallbackInfo ci) {
         try {
             DevelopmentWorld.initialize();
-            UpdateChecker.onJoinCheckMessage();
         } catch (Throwable t) {
             JustHelperClient.LOGGER.error("Develop world initialization error: {}", t.getMessage());
         }
