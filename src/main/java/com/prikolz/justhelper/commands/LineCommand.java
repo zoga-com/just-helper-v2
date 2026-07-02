@@ -28,6 +28,15 @@ public class LineCommand {
         };
     }
 
+    public LineCommand(LiteralArgumentBuilder<ClientSuggestionProvider> main) {
+        this.main = main;
+        this.onRunError = (context, error) -> {
+            JustHelperCommand.feedback("<red>При выполнении команды произошла ошибка: {0}\nПодробнее /justhelper logs", error.getMessage());
+            JustHelperClient.LOGGER.printStackTrace(error);
+            return 0;
+        };
+    }
+
     public LineCommand add(LiteralArgumentBuilder<ClientSuggestionProvider> arg) {
         line.add(new LiteralArg(arg));
         return this;

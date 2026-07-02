@@ -3,10 +3,12 @@ package com.prikolz.justhelper.commands;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.arguments.ArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.prikolz.justhelper.JustHelperClient;
 import com.prikolz.justhelper.dev.values.Variable;
+import com.prikolz.justhelper.util.Pair;
 import com.prikolz.justhelper.util.TextUtils;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 
@@ -43,6 +45,8 @@ public class JustHelperCommands {
         register( new Base64Command() );
         register( new ZlibCommand() );
         register( new GzipCommand() );
+        register( new AliasCommand("envg", "env var list game $name", Pair.of("name", StringArgumentType.greedyString())) );
+        register( new AliasCommand("envs", "env var list save $name", Pair.of("name", StringArgumentType.greedyString())) );
     }
 
     public static void registerDispatcher(CommandDispatcher<ClientSuggestionProvider> dispatcher) {
