@@ -35,7 +35,7 @@ public class JustHelperClient implements ClientModInitializer {
 	public void onInitializeClient() {
 		JustHelperCommands.initialize();
 		CONFIG = new Config();
-		CONFIG.read();
+		CONFIG.readFile();
         DevValueRegistry.registerAll();
         String versionName = "Unknown";
         String dateStr = "Unknown";

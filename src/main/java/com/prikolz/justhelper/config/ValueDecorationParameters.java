@@ -1,85 +1,31 @@
 package com.prikolz.justhelper.config;
 
-import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.prikolz.justhelper.Config;
 import com.prikolz.justhelper.dev.values.Text;
 import com.prikolz.justhelper.dev.values.Variable;
 import net.kyori.adventure.text.format.NamedTextColor;
 
-public class ValueDecorationParameters {
+public class ValueDecorationParameters extends ConfigObject {
 
-    public Config.Parameter<Boolean, JsonPrimitive> enabled = Parameters.boolParameter("enabled", true, null);
+    public Config.Parameter<Boolean, JsonPrimitive> enabled = boolParameter("enabled", true);
 
-    public Config.Parameter<VariableDecorationsParameter, JsonObject> variable = new Config.Parameter<>(
-            new VariableDecorationsParameter(),
+    public ObjectParameter<VariableDecorationsParameter> variable = objectParameter(
             "variable",
-            null,
-            (value, logger) -> {
-                var result = new JsonObject();
-                value.characterLimit.write(result, logger);
-                value.useNames.write(result, logger);
-                value.globalColor.write(result, logger);
-                value.saveColor.write(result, logger);
-                value.localColor.write(result, logger);
-                value.lineColor.write(result, logger);
-                return result;
-            },
-            (json, logger) -> {
-                var result = new VariableDecorationsParameter();
-                result.characterLimit.read(json, logger);
-                result.useNames.read(json, logger);
-                result.globalColor.read(json, logger);
-                result.saveColor.read(json, logger);
-                result.localColor.read(json, logger);
-                result.lineColor.read(json, logger);
-                return result;
-            }
+            VariableDecorationsParameter::new
     );
 
-    public Config.Parameter<TextDecorationsParameter, JsonObject> text = new Config.Parameter<>(
-            new TextDecorationsParameter(),
+    public ObjectParameter<TextDecorationsParameter> text = objectParameter(
             "text",
-            null,
-            (value, logger) -> {
-                var result = new JsonObject();
-                value.characterLimit.write(result, logger);
-                value.plainColor.write(result, logger);
-                value.legacyColor.write(result, logger);
-                value.miniColor.write(result, logger);
-                value.jsonColor.write(result, logger);
-                return result;
-            },
-            (json, logger) -> {
-                var result = new TextDecorationsParameter();
-                result.characterLimit.read(json, logger);
-                result.plainColor.read(json, logger);
-                result.legacyColor.read(json, logger);
-                result.miniColor.read(json, logger);
-                result.jsonColor.read(json, logger);
-                return result;
-            }
+            TextDecorationsParameter::new
     );
 
-    public Config.Parameter<NumberDecorationsParameter, JsonObject> number = new Config.Parameter<>(
-            new NumberDecorationsParameter(),
+    public ObjectParameter<NumberDecorationsParameter> number = objectParameter(
             "number",
-            null,
-            (value, logger) -> {
-                var result = new JsonObject();
-                value.characterLimit.write(result, logger);
-                value.color.write(result, logger);
-                return result;
-            },
-            (json, logger) -> {
-                var result = new NumberDecorationsParameter();
-                result.characterLimit.read(json, logger);
-                result.color.read(json, logger);
-                return result;
-            }
+            NumberDecorationsParameter::new
     );
 
-    public static class VariableDecorationsParameter {
+    public static class VariableDecorationsParameter extends ConfigObject {
         public int getColor(Variable.Scope scope) {
             switch (scope) {
                 case GAME -> {
@@ -98,35 +44,25 @@ public class ValueDecorationParameters {
             return lineColor.value;
         }
 
-        public Config.Parameter<Integer, JsonPrimitive> characterLimit =
-                Parameters.intParameter("character_limit", 1, 0, 10, null);
+        public Config.Parameter<Integer, JsonPrimitive> characterLimit = intParameter("character_limit", 1, 0, 10);
 
-        public Config.Parameter<Boolean, JsonPrimitive> useNames =
-                Parameters.boolParameter("use_variable_name", false, null);
+        public Config.Parameter<Boolean, JsonPrimitive> useNames = boolParameter("use_variable_name", false);
 
-        public Config.Parameter<Integer, JsonPrimitive> globalColor =
-                Parameters.colorParameter("global_color", 0xABC4D6, null);
+        public Config.Parameter<Integer, JsonPrimitive> globalColor = colorParameter("global_color", 0xABC4D6);
 
-        public Config.Parameter<Integer, JsonPrimitive> saveColor =
-                Parameters.colorParameter("save_color", NamedTextColor.YELLOW.value(), null);
+        public Config.Parameter<Integer, JsonPrimitive> saveColor = colorParameter("save_color", NamedTextColor.YELLOW.value());
 
-        public Config.Parameter<Integer, JsonPrimitive> localColor =
-                Parameters.colorParameter("local_color", NamedTextColor.GREEN.value(), null);
+        public Config.Parameter<Integer, JsonPrimitive> localColor = colorParameter("local_color", NamedTextColor.GREEN.value());
 
-        public Config.Parameter<Integer, JsonPrimitive> lineColor =
-                Parameters.colorParameter("line_color", NamedTextColor.AQUA.value(), null);
+        public Config.Parameter<Integer, JsonPrimitive> lineColor = colorParameter("line_color", NamedTextColor.AQUA.value());
     }
 
-    public static class NumberDecorationsParameter {
-        public Config.Parameter<Integer, JsonPrimitive> characterLimit =
-                Parameters.intParameter("character_limit", 2, 0, 10, null);
-
-        public Config.Parameter<Integer, JsonPrimitive> color =
-                Parameters.colorParameter("color", NamedTextColor.YELLOW.value(), null);
+    public static class NumberDecorationsParameter extends ConfigObject {
+        public Config.Parameter<Integer, JsonPrimitive> characterLimit = intParameter("character_limit", 2, 0, 10);
+        public Config.Parameter<Integer, JsonPrimitive> color = colorParameter("color", NamedTextColor.YELLOW.value());
     }
 
-    public static class TextDecorationsParameter {
-
+    public static class TextDecorationsParameter extends ConfigObject {
         public int getColor(Text.ParsingType type) {
             switch (type) {
                 case PLAIN -> {
@@ -145,19 +81,14 @@ public class ValueDecorationParameters {
             return plainColor.value;
         }
 
-        public Config.Parameter<Integer, JsonPrimitive> characterLimit =
-                Parameters.intParameter("character_limit", 2, 0, 10, null);
+        public Config.Parameter<Integer, JsonPrimitive> characterLimit = intParameter("character_limit", 2, 0, 10);
 
-        public Config.Parameter<Integer, JsonPrimitive> plainColor =
-                Parameters.colorParameter("plain_color", NamedTextColor.WHITE.value(), null);
+        public Config.Parameter<Integer, JsonPrimitive> plainColor = colorParameter("plain_color", NamedTextColor.WHITE.value());
 
-        public Config.Parameter<Integer, JsonPrimitive> legacyColor =
-                Parameters.colorParameter("legacy_color", NamedTextColor.YELLOW.value(), null);
+        public Config.Parameter<Integer, JsonPrimitive> legacyColor = colorParameter("legacy_color", NamedTextColor.YELLOW.value());
 
-        public Config.Parameter<Integer, JsonPrimitive> miniColor =
-                Parameters.colorParameter("minimessage_color", NamedTextColor.GREEN.value(), null);
+        public Config.Parameter<Integer, JsonPrimitive> miniColor = colorParameter("minimessage_color", NamedTextColor.GREEN.value());
 
-        public Config.Parameter<Integer, JsonPrimitive> jsonColor =
-                Parameters.colorParameter("json_color", 0xFFB657, null);
+        public Config.Parameter<Integer, JsonPrimitive> jsonColor = colorParameter("json_color", 0xFFB657);
     }
 }

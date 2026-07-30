@@ -25,6 +25,7 @@ public class JustHelperCommands {
         register( new MainModCommand() );
         register( new FindCommand() );
         register( new BackCommand() );
+        register( new BuildPlayCommand() );
         register( new FoundListCommand() );
         register( new FloorCommand() );
         register( new DescribeCommand() );

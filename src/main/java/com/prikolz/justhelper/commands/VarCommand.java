@@ -2,8 +2,7 @@ package com.prikolz.justhelper.commands;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.prikolz.justhelper.CommandBuffer;
-import com.prikolz.justhelper.DevelopmentWorld;
+import com.prikolz.justhelper.CodeSpace;
 import com.prikolz.justhelper.commands.arguments.VariableHistoryArgumentType;
 import com.prikolz.justhelper.dev.values.Variable;
 import com.prikolz.justhelper.util.JustHelperUtils;
@@ -37,7 +36,7 @@ public class VarCommand extends JustHelperCommand {
     }
 
     public void execute(String names) {
-        if (!DevelopmentWorld.isActive()) return;
+        if (!CodeSpace.isActive()) return;
         for (String name : names.split(split)) {
             if (name.startsWith(" ")) name = name.substring(1);
             var variable = new Variable(type, name);

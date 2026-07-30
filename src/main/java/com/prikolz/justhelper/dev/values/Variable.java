@@ -1,7 +1,7 @@
 package com.prikolz.justhelper.dev.values;
 
 import com.prikolz.justhelper.Config;
-import com.prikolz.justhelper.DevelopmentWorld;
+import com.prikolz.justhelper.CodeSpace;
 import com.prikolz.justhelper.util.Pair;
 import com.prikolz.justhelper.util.TextUtils;
 import net.minecraft.core.component.DataComponents;
@@ -50,7 +50,7 @@ public class Variable extends DevValue {
 
     @Override
     public void handleItemStack(ItemStack item) {
-        DevelopmentWorld.addToHistory(scope, variable);
+        CodeSpace.addToHistory(scope, variable);
         setDecorations(item);
     }
 

@@ -1,6 +1,7 @@
 package com.prikolz.justhelper;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.protocol.game.ServerboundChatCommandPacket;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -22,7 +23,7 @@ public abstract class CommandBuffer {
         var command = buffer.poll();
         if (command == null) return;
         currentCd = Config.get().commandBufferCD.value;
-        connection.sendUnattendedCommand(command, null);
+        connection.send(new ServerboundChatCommandPacket(command));
     }
 
     public static void clear() { buffer.clear(); }

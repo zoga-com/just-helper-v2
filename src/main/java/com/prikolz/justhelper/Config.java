@@ -3,7 +3,6 @@ package com.prikolz.justhelper;
 import com.google.gson.*;
 import com.prikolz.justhelper.config.*;
 import com.prikolz.justhelper.util.JustHelperUtils;
-import com.prikolz.justhelper.util.TextUtils;
 import net.minecraft.util.FileUtil;
 import net.minecraft.world.level.block.Blocks;
 
@@ -17,11 +16,9 @@ import java.util.List;
 
 import static com.prikolz.justhelper.JustHelperClient.GSON;
 
-public class Config {
+public class Config extends ConfigObject {
 
     public static Config get() { return JustHelperClient.CONFIG; }
-
-    public final List<Parameter<?, ?>> parameters = new ArrayList<>();
 
     public Parameter<CodeBlockNames, JsonObject> codeBlockNames = new Parameter<>(
             defaultBlockNames(),
@@ -41,37 +38,18 @@ public class Config {
                 return result;
             }
     );
-    public Parameter<ChatParameters, JsonObject> chatParameters = new Parameter<>(
-            new ChatParameters(),
-            "chat_parameters",
-            parameters,
-            (value, logger) -> {
-                var result = new JsonObject();
-                value.showLineLimit.write(result, logger);
-                value.enableMarkers.write(result, logger);
-                return result;
-            },
-            (json, logger) -> {
-                var result = new ChatParameters();
-                result.showLineLimit.read(json, logger);
-                result.enableMarkers.read(json, logger);
-                return result;
-            }
-    );
-    public Parameters.BooleanParameter showPositionInCode =
-            Parameters.boolParameter("show_position_in_code", true, parameters);
+    public ObjectParameter<ChatParameters> chatParameters = objectParameter("chat_parameters", ChatParameters::new);
 
-    public Parameter<Long, JsonPrimitive> commandBufferCD =
-            Parameters.longParameter("command_sending_cooldown", 700L, 0L, 10000L, parameters);
+    public ObjectParameter<CodeSpaceRenderParameters> codeSpaceRender =
+            objectParameter("code_space_render", CodeSpaceRenderParameters::new);
 
-    public Parameters.BooleanParameter teleportAnchor =
-            Parameters.boolParameter("enable_teleport_anchor", true, parameters);
+    public LongParameter commandBufferCD = longParameter("command_sending_cooldown", 900L, 0L, 10000L);
 
-    public Parameters.BooleanParameter findEach =
-            Parameters.boolParameter("enable_each_find_list", true, parameters);
+    public BooleanParameter teleportAnchor = boolParameter("enable_teleport_anchor", true);
 
-    public Parameters.BooleanParameter updateChecker =
-            Parameters.boolParameter("enable_update_checker", true, parameters);
+    public BooleanParameter findEach = boolParameter("enable_each_find_list", true);
+
+    public BooleanParameter updateChecker = boolParameter("enable_update_checker", true);
 
     public Parameter<ValueFormats, JsonObject> valueFormats = new Parameter<>(
             defaultValueFormats(),
@@ -88,40 +66,13 @@ public class Config {
                 return new ValueFormats(map);
             }
     );
-    public Parameter<CommandParameters, JsonObject> commandParameters = new Parameter<>(
-            new CommandParameters(),
-            "commands",
-            parameters,
-            CommandParameters::write,
-            (json, logger) -> {
-                var result = new CommandParameters();
-                result.read(json, logger);
-                return result;
-            }
-    );
-    public Parameter<ValueDecorationParameters, JsonObject> valueDecorations = new Parameter<>(
-            new ValueDecorationParameters(),
-            "value_decorations",
-            parameters,
-            (value, logger) -> {
-                var result = new JsonObject();
-                value.enabled.write(result, logger);
-                value.variable.write(result, logger);
-                value.text.write(result, logger);
-                value.number.write(result, logger);
-                return result;
-            },
-            (json, logger) -> {
-                var result = new ValueDecorationParameters();
-                result.enabled.read(json, logger);
-                result.variable.read(json, logger);
-                result.text.read(json, logger);
-                result.number.read(json, logger);
-                return result;
-            }
-    );
 
-    public List<String> read() {
+    public ObjectParameter<CommandParameters> commandParameters = objectParameter("commands", CommandParameters::new);
+
+    public ObjectParameter<ValueDecorationParameters> valueDecorations =
+            objectParameter("value_decorations", ValueDecorationParameters::new);
+
+    public List<String> readFile() {
         JustHelperClient.LOGGER.info("Reading config...");
         var logger = new ConfigLogger();
         File configFile = new File(JustHelperUtils.getConfigFolder().getPath() + "/config.json");
@@ -133,7 +84,7 @@ public class Config {
         }
         try {
             JsonObject json = GSON.fromJson(GSON.newJsonReader(new FileReader(configFile)), JsonObject.class);
-            for (var parameter : parameters) parameter.read(json, logger);
+            read(json, logger);
             if (logger.configWasUpdated) Files.writeString(configFile.toPath(), GSON.toJson(json), StandardCharsets.UTF_8);
         } catch (Throwable t) {
             logger.log("[E] Fail to read config file: " + t.getMessage());
@@ -209,7 +160,7 @@ public class Config {
         result.add(Blocks.GOLD_BLOCK, "<yellow>Событие сущности");
         result.add(Blocks.BRICKS, "<green>Если сущность");
         result.add(Blocks.MOSSY_COBBLESTONE, "<dark_green>Действие над сущностью");
-        result.add(Blocks.LAPIS_BLOCK, "<aqua>Функция");
+        result.add(Blocks.LAPIS_BLOCK, "<blue>Функция");
         result.add(Blocks.EMERALD_BLOCK, "<green>Процесс");
         result.add(Blocks.IRON_BLOCK, "<yellow>Действие с переменной");
         result.add(Blocks.OBSIDIAN, "<gold>Если переменная");

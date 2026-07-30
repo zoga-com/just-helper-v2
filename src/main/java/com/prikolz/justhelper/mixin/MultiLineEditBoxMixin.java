@@ -29,7 +29,4 @@ public interface MultiLineEditBoxMixin {
 
     @Invoker("scrollRate")
     double scrollRate();
-
-    @Invoker("updateWidgetNarration")
-    void updateWidgetNarration(NarrationElementOutput narrationElementOutput);
 }

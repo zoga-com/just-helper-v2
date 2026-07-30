@@ -8,7 +8,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import com.prikolz.justhelper.DevelopmentWorld;
+import com.prikolz.justhelper.CodeSpace;
 import com.prikolz.justhelper.util.TextUtils;
 import net.minecraft.network.chat.Component;
 
@@ -24,7 +24,7 @@ public class FloorArgumentType implements ArgumentType<Integer> {
 
     @Override
     public Integer parse(StringReader reader) throws CommandSyntaxException {
-        if (!DevelopmentWorld.isActive()) throw MUST_BE_IN_DEV.create("");
+        if (!CodeSpace.isActive()) throw MUST_BE_IN_DEV.create("");
         String name = parser.parse(reader);
         input = name;
         try {
@@ -32,7 +32,7 @@ public class FloorArgumentType implements ArgumentType<Integer> {
             if (floor < 1) throw FLOOR_NOT_FOUND.create(floor);
             return floor;
         } catch (Throwable ignore) {}
-        var describes = DevelopmentWorld.describes.plainDescribes;
+        var describes = CodeSpace.describes.plainDescribes;
         for (int floor : describes.keySet()) {
             var describe = describes.get(floor);
             if (describe.toLowerCase().contains(name.toLowerCase())) return floor;
@@ -47,8 +47,8 @@ public class FloorArgumentType implements ArgumentType<Integer> {
 
     @Override
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-        if (DevelopmentWorld.isActive()) {
-            var describes = DevelopmentWorld.describes.plainDescribes;
+        if (CodeSpace.isActive()) {
+            var describes = CodeSpace.describes.plainDescribes;
             if (input.isEmpty()) {
                 describes.values().forEach(builder::suggest);
                 return builder.buildFuture();

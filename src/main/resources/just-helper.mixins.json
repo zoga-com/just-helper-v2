@@ -10,6 +10,7 @@
     "GuiGraphicsMixin",
     "GUIMixin",
     "JoinMultiplayerScreenMixin",
+    "LevelRendererMixin",
     "MinecraftMixin",
     "MultiLineEditBoxMixin",
     "SpriteContentsMixin",

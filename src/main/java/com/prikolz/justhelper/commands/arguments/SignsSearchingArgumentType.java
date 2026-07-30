@@ -7,9 +7,8 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import com.prikolz.justhelper.DevelopmentWorld;
+import com.prikolz.justhelper.CodeSpace;
 import com.prikolz.justhelper.dev.SignInfo;
-import net.minecraft.network.chat.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +46,7 @@ public class SignsSearchingArgumentType implements ArgumentType<SignsSearchingAr
             if (line.isEmpty()) return emptyCondition(list);
         }
         final String finalLine = line.toLowerCase();
-        DevelopmentWorld.signs.values().forEach((v) -> {
+        CodeSpace.signs.values().forEach((v) -> {
             var lines = v.getLines();
             var i = 0;
             for (String lineS : lines) {
@@ -64,7 +63,7 @@ public class SignsSearchingArgumentType implements ArgumentType<SignsSearchingAr
     }
 
     private InfoPack emptyCondition(ArrayList<FoundSignInfo> list) {
-        for (var sign : DevelopmentWorld.signs.values()) {
+        for (var sign : CodeSpace.signs.values()) {
             var lines = sign.getLines();
             if (lines.length == 0) continue;
             var info = new FoundSignInfo(lines, 0, sign);

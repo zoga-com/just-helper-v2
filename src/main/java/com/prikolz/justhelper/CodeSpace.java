@@ -5,11 +5,8 @@ import com.prikolz.justhelper.commands.JustHelperCommand;
 import com.prikolz.justhelper.commands.arguments.SignsSearchingArgumentType;
 import com.prikolz.justhelper.dev.*;
 import com.prikolz.justhelper.dev.values.DevValue;
-import com.prikolz.justhelper.dev.values.DevValueRegistry;
 import com.prikolz.justhelper.dev.values.Variable;
-import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -18,23 +15,22 @@ import net.minecraft.world.level.block.entity.SignBlockEntity;
 import java.util.HashMap;
 import java.util.Set;
 
-public abstract class DevelopmentWorld {
-
-    private static final String DEV_SUFFIX = "_creativeplus_editor";
-    private static final String DEV_PREFIX = "world_";
+public abstract class CodeSpace {
+    public static final String WORLD_PREFIX = "world_";
+    public static final String WORLD_SUFFIX = "_creativeplus_editor";
 
     public static final HashMap<Variable.Scope, VariablesHistory> history = new HashMap<>();
     public static final HashMap<BlockPos, SignInfo> signs = new HashMap<>();
     public static FloorDescribes describes = null;
 
-    private static DevRender render = null;
+    private static CodeSpaceRender render = null;
 
     private static String worldUUID;
 
     public static boolean isActive() {
         var name = getWorldName();
         if (name == null) return false;
-        return name.endsWith(DEV_SUFFIX) && name.startsWith(DEV_PREFIX);
+        return name.endsWith(WORLD_SUFFIX) && name.startsWith(WORLD_PREFIX);
     }
 
     private static String getWorldName() {
@@ -55,8 +51,8 @@ public abstract class DevelopmentWorld {
         }
         var worldName = getWorldName();
         if (worldName == null) return;
-        render = new DevRender();
-        worldUUID = worldName.substring(DEV_PREFIX.length(), worldName.length() - DEV_SUFFIX.length());
+        render = new CodeSpaceRender();
+        worldUUID = worldName.substring(WORLD_PREFIX.length(), worldName.length() - WORLD_SUFFIX.length());
         JustHelperClient.LOGGER.info("Joined to develop world {}", worldUUID);
         history.forEach((k, v) -> v.save());
         history.clear();
@@ -68,9 +64,7 @@ public abstract class DevelopmentWorld {
         describes.spawn();
     }
 
-    public static void render(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
-        if (render != null) render.render(guiGraphics, deltaTracker);
-    }
+    public static CodeSpaceRender render() { return render; }
 
     public static void handleItemStack(ItemStack item) {
         if (!isActive()) return;

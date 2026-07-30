@@ -1,9 +1,8 @@
 package com.prikolz.justhelper.mixin;
 
 import com.prikolz.justhelper.CommandBuffer;
-import com.prikolz.justhelper.DevelopmentWorld;
+import com.prikolz.justhelper.CodeSpace;
 import com.prikolz.justhelper.JustHelperClient;
-import com.prikolz.justhelper.UpdateChecker;
 import com.prikolz.justhelper.util.JustHelperUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -24,7 +23,7 @@ public class MinecraftMixin {
     @Inject(method = "setLevel", at = @At("TAIL"))
     public void onSetLevel(ClientLevel clientLevel, CallbackInfo ci) {
         try {
-            DevelopmentWorld.initialize();
+            CodeSpace.initialize();
         } catch (Throwable t) {
             JustHelperClient.LOGGER.error("Develop world initialization error: {}", t.getMessage());
         }

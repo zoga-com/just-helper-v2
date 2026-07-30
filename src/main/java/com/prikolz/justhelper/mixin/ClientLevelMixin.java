@@ -1,6 +1,6 @@
 package com.prikolz.justhelper.mixin;
 
-import com.prikolz.justhelper.DevelopmentWorld;
+import com.prikolz.justhelper.CodeSpace;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -13,6 +13,6 @@ public class ClientLevelMixin {
 
     @Inject(method = "onBlockEntityAdded", at = @At("HEAD"))
     private void onBlockEntityAdded(BlockEntity blockEntity, CallbackInfo ci) {
-        DevelopmentWorld.addSign(blockEntity);
+        CodeSpace.addSign(blockEntity);
     }
 }

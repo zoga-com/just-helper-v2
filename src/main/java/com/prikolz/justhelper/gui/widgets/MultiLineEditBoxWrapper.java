@@ -49,7 +49,7 @@ public class MultiLineEditBoxWrapper extends AbstractTextAreaWidget {
 
     @Override
     public void renderWidget(GuiGraphics guiGraphics, int i, int j, float f) {
-        hold.renderWidget(guiGraphics, i, j, f);
+        hold.render(guiGraphics, i, j, f);
     }
 
     @Override
@@ -58,9 +58,7 @@ public class MultiLineEditBoxWrapper extends AbstractTextAreaWidget {
     }
 
     @Override
-    protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
-        ((MultiLineEditBoxMixin) hold).updateWidgetNarration(narrationElementOutput);
-    }
+    protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {}
 
     @Override
     public void mouseMoved(double d, double e) {
@@ -80,11 +78,6 @@ public class MultiLineEditBoxWrapper extends AbstractTextAreaWidget {
     @Override
     public boolean mouseDragged(MouseButtonEvent mouseButtonEvent, double d, double e) {
         return hold.mouseDragged(mouseButtonEvent, d, e);
-    }
-
-    @Override
-    protected void onDrag(MouseButtonEvent mouseButtonEvent, double d, double e) {
-        ((MultiLineEditBoxMixin) hold).onDrag(mouseButtonEvent, d, e);
     }
 
     @Override

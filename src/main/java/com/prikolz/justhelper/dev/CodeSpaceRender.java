@@ -1,17 +1,21 @@
 package com.prikolz.justhelper.dev;
 
 import com.prikolz.justhelper.Config;
-import com.prikolz.justhelper.DevelopmentWorld;
+import com.prikolz.justhelper.CodeSpace;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.chunk.SectionRenderDispatcher;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 
-public class DevRender {
+import java.util.Iterator;
+
+public class CodeSpaceRender {
 
     private int updateCooldown = 0;
 
@@ -28,12 +32,12 @@ public class DevRender {
         var player = minecraft.player;
         if (player == null || level == null) return;
         pos = new BlockCodePos(4, player.getBlockY(), player.getBlockZ());
-        Component describe = DevelopmentWorld.describes.render.get(pos.floor);
+        Component describe = CodeSpace.describes.render.get(pos.floor);
         floorText = (describe == null ? Component.literal(pos.floor + " этаж") : describe).copy().setStyle(Style.EMPTY.withColor(ChatFormatting.YELLOW));
         lineText = Component.literal(pos.line + " линия");
         var block = pos.toPos();
         var mat = level.getBlockState(block).getBlock();
-        var sign = DevelopmentWorld.signs.get(new BlockPos(block.getX(), block.getY(), block.getZ() + 1));
+        var sign = CodeSpace.signs.get(new BlockPos(block.getX(), block.getY(), block.getZ() + 1));
         blockText = Component.empty();
         if (sign != null) {
             var lines = sign.getLines();
@@ -45,13 +49,30 @@ public class DevRender {
 
     }
 
-    public void render(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
+    public void levelRender(
+            ObjectArrayList<SectionRenderDispatcher.RenderSection> visibleSections
+    ) {
+        var config = Config.get().codeSpaceRender.value.verticalRenderLimit.value;
+        if (!CodeSpace.isActive() || !config.enabled.value) return;
+        var player = Minecraft.getInstance().player;
+        if (player == null) return;
+        Iterator<SectionRenderDispatcher.RenderSection> iterator = visibleSections.iterator();
+        while (iterator.hasNext()) {
+            SectionRenderDispatcher.RenderSection section = iterator.next();
+            BlockPos origin = section.getRenderOrigin();
+            double dy = origin.getY() + 8 - player.getY();
+            if (dy < 0) dy *= -1;
+            if (dy > config.limit.value) iterator.remove();
+        }
+    }
+
+    public void renderGUI(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
         if (updateCooldown <= 0) {
             infoUpdate();
             updateCooldown = 10;
         }
         updateCooldown--;
-        if (Config.get().showPositionInCode.value) renderPosition(guiGraphics);
+        if (Config.get().codeSpaceRender.value.showPosition.value) renderPosition(guiGraphics);
     }
 
     private void renderPosition(GuiGraphics guiGraphics) {

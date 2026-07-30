@@ -47,7 +47,7 @@ public class ConfigScreen extends Screen {
         title.setPosition(width / 2 - title.getWidth() / 2, 5);
         saveButton = Button.builder(Component.translatable("gui.done"), (btn) -> {
             Config.saveConfig(this.editBox.box.getValue());
-            Config.get().read();
+            Config.get().readFile();
             Minecraft.getInstance().setScreen(null);
             JustHelperCommand.feedback("<green>JustHelper >> Конфиг обновлен");
         }).size(100, 20).pos(width / 2 + 7, height - 25).build();
@@ -69,7 +69,7 @@ public class ConfigScreen extends Screen {
                     "Конфиг JustHelper будет сброшен до значений по умолчанию.",
                     () -> {
                         Config.printLogs( Config.get().reset() );
-                        Config.get().read();
+                        Config.get().readFile();
                         JustHelperCommand.feedback("<green>JustHelper >> Конфиг обновлен");
                         Minecraft.getInstance().setScreen(null);
                     },
@@ -143,7 +143,7 @@ public class ConfigScreen extends Screen {
 
         @Override
         protected void renderWidget(GuiGraphics guiGraphics, int i, int j, float f) {
-            box.renderWidget(guiGraphics, i, j, f);
+            box.render(guiGraphics, i, j, f);
             if (error.error) {
                 var lineCount = ((MultiLineEditBoxMixin) box).getTextField().getLineCount();
                 var pos = ((double) error.line / lineCount) * (box.maxScrollAmount() + box.getHeight() - 4);
@@ -162,7 +162,7 @@ public class ConfigScreen extends Screen {
 
         @Override
         protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
-            box.updateWidgetNarration(narrationElementOutput);
+
         }
 
         @Override
@@ -183,11 +183,6 @@ public class ConfigScreen extends Screen {
         @Override
         public boolean mouseDragged(MouseButtonEvent mouseButtonEvent, double d, double e) {
             return box.mouseDragged(mouseButtonEvent, d, e);
-        }
-
-        @Override
-        protected void onDrag(MouseButtonEvent mouseButtonEvent, double d, double e) {
-            ((MultiLineEditBoxMixin) box).onDrag(mouseButtonEvent, d, e);
         }
 
         @Override

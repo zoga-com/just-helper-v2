@@ -2,7 +2,7 @@ package com.prikolz.justhelper.dev;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import com.prikolz.justhelper.DevelopmentWorld;
+import com.prikolz.justhelper.CodeSpace;
 import com.prikolz.justhelper.JustHelperClient;
 import com.prikolz.justhelper.mixin.DisplayMixin;
 import com.prikolz.justhelper.mixin.TextDisplayMixin;
@@ -83,7 +83,7 @@ public class FloorDescribes {
     }
 
     public void describe(int floor, String text) {
-        if(!DevelopmentWorld.isActive()) return;
+        if(!CodeSpace.isActive()) return;
         var level = Minecraft.getInstance().level;
         if (level == null) return;
         describes.put(floor, floor + " " + text);
@@ -93,7 +93,7 @@ public class FloorDescribes {
     }
 
     public boolean removeDescribe(int floor) {
-        if(!DevelopmentWorld.isActive()) return false;
+        if(!CodeSpace.isActive()) return false;
         if (!describes.containsKey(floor)) return false;
         describes.remove(floor);
         plainDescribes.remove(floor);

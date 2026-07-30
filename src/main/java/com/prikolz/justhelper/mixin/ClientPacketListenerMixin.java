@@ -1,22 +1,18 @@
 package com.prikolz.justhelper.mixin;
 
 import com.mojang.brigadier.CommandDispatcher;
-import com.prikolz.justhelper.Config;
-import com.prikolz.justhelper.DevelopmentWorld;
+import com.prikolz.justhelper.CodeSpace;
 import com.prikolz.justhelper.JustHelperClient;
 import com.prikolz.justhelper.UpdateChecker;
 import com.prikolz.justhelper.commands.FindCommand;
 import com.prikolz.justhelper.commands.JustHelperCommand;
 import com.prikolz.justhelper.commands.JustHelperCommands;
 import com.prikolz.justhelper.dev.BlockCodePos;
-import com.prikolz.justhelper.dev.VariablesHistory;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 import net.minecraft.network.protocol.game.*;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
@@ -57,7 +53,7 @@ public class ClientPacketListenerMixin {
         }
         if (command.startsWith("tp") || command.startsWith("teleport") || command.startsWith("editor teleport")) {
             var args = command.split(" ");
-            DevelopmentWorld.teleportAnchor();
+            CodeSpace.teleportAnchor();
             try {
                 var pos = new BlockCodePos(
                         (int) Double.parseDouble(args[1]),
@@ -78,20 +74,20 @@ public class ClientPacketListenerMixin {
 
     @Inject(method = "handleContainerContent", at = @At("TAIL"))
     public void onHandleContainerContent(ClientboundContainerSetContentPacket packet, CallbackInfo ci) {
-        if (!DevelopmentWorld.isActive()) return;
-        for (ItemStack item : packet.items()) DevelopmentWorld.handleItemStack(item);
+        if (!CodeSpace.isActive()) return;
+        for (ItemStack item : packet.items()) CodeSpace.handleItemStack(item);
     }
 
     @Inject(method = "handleContainerSetSlot", at = @At("TAIL"))
     public void onHandleContainerSetSlot(ClientboundContainerSetSlotPacket packet, CallbackInfo ci) {
-        if (!DevelopmentWorld.isActive()) return;
-        DevelopmentWorld.handleItemStack(packet.getItem());
+        if (!CodeSpace.isActive()) return;
+        CodeSpace.handleItemStack(packet.getItem());
     }
 
     @Inject(method = "handleSetCursorItem", at = @At("TAIL"))
     public void onHandleSetCursorItem(ClientboundSetCursorItemPacket packet, CallbackInfo ci) {
-        if (!DevelopmentWorld.isActive()) return;
-        DevelopmentWorld.handleItemStack(packet.contents());
+        if (!CodeSpace.isActive()) return;
+        CodeSpace.handleItemStack(packet.contents());
     }
 
     @Inject(method = "handleLogin", at = @At("TAIL"))

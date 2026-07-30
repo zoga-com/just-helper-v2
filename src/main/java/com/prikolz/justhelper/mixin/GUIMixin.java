@@ -1,6 +1,6 @@
 package com.prikolz.justhelper.mixin;
 
-import com.prikolz.justhelper.DevelopmentWorld;
+import com.prikolz.justhelper.CodeSpace;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
@@ -13,6 +13,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class GUIMixin {
     @Inject(method = "render", at = @At("TAIL"))
     public void onRender(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci) {
-        DevelopmentWorld.render(guiGraphics, deltaTracker);
+        var render = CodeSpace.render();
+        if (render == null) return;
+        render.renderGUI(guiGraphics, deltaTracker);
     }
 }
