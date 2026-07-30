@@ -4,6 +4,7 @@ import com.prikolz.justhelper.CommandBuffer;
 import com.prikolz.justhelper.CodeSpace;
 import com.prikolz.justhelper.JustHelperClient;
 import com.prikolz.justhelper.util.JustHelperUtils;
+import com.prikolz.justhelper.util.Scheduler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import org.spongepowered.asm.mixin.Mixin;
@@ -17,7 +18,7 @@ public class MinecraftMixin {
     @Inject(method = "tick", at = @At("TAIL"))
     public void onTick(CallbackInfo ci) {
         CommandBuffer.tick(50);
-        JustHelperUtils.resolveRunQueue();
+        Scheduler.tick();
     }
 
     @Inject(method = "setLevel", at = @At("TAIL"))

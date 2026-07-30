@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.prikolz.justhelper.util.ContextRunnable;
 import com.prikolz.justhelper.util.JustHelperUtils;
+import com.prikolz.justhelper.util.Scheduler;
 import com.prikolz.justhelper.util.TextUtils;
 import net.minecraft.client.Minecraft;
 
@@ -32,16 +33,18 @@ public class UpdateChecker {
         if (!Config.get().updateChecker.value) return;
         check((info) -> {
             if (!info.isNew) return;
-            if (Minecraft.getInstance().player == null) {
-                requireCheck = true;
-                return;
-            }
-            JustHelperClient.LOGGER.info("Available new update {}", info.title);
-            JustHelperUtils.send(
-                    "<green>[↓] <aqua>(JustHelper) <white>Доступно обновление: <green><underlined>{0}</underlined>",
-                    "<hover:show_text:'Скачать/Посмотреть изменения'><click:run_command:'/justhelper updates'>{1}",
-                    info.title
-            );
+            Scheduler.runLater(20, () -> {
+                if (Minecraft.getInstance().player == null) {
+                    requireCheck = true;
+                    return;
+                }
+                JustHelperClient.LOGGER.info("Available new update {}", info.title);
+                JustHelperUtils.send(
+                        "<green>[↓] <aqua>(JustHelper) <white>Доступно обновление: <green><underlined>{0}</underlined>",
+                        "<hover:show_text:'Скачать/Посмотреть изменения'><click:run_command:'/justhelper updates'>{1}",
+                        info.title
+                );
+            });
         }, (reason) -> {});
     }
 
@@ -72,7 +75,7 @@ public class UpdateChecker {
 
     public static void check(ContextRunnable<ReleaseInfo> onResponse, ContextRunnable<String> onFail) {
         if (cache != null && cacheTimestamp > System.currentTimeMillis()) {
-            JustHelperUtils.sync(() ->
+            Scheduler.sync(() ->
                     onResponse.run(cache)
             );
             return;
@@ -98,11 +101,11 @@ public class UpdateChecker {
                 );
                 cache = new ReleaseInfo(date.isAfter(JustHelperClient.versionDate), version, title, description);
                 cacheTimestamp = System.currentTimeMillis() + 5 * 60000;
-                JustHelperUtils.sync(() ->
+                Scheduler.sync(() ->
                         onResponse.run(cache)
                 );
             } catch (Exception e) {
-                JustHelperUtils.sync(() ->
+                Scheduler.sync(() ->
                         onFail.run(e.getMessage())
                 );
                 JustHelperClient.LOGGER.warn("Check updates fail: {}", e.getMessage());
