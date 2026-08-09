@@ -2,12 +2,10 @@ package com.prikolz.justhelper.commands;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.prikolz.justhelper.CommandBuffer;
+import com.prikolz.justhelper.codespace.CodeSpace;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
-import net.minecraft.world.phys.Vec3;
 
 public class BackCommand extends JustHelperCommand {
-
-    public static Vec3 prevPos = null;
 
     public BackCommand() {
         super("back");
@@ -17,8 +15,10 @@ public class BackCommand extends JustHelperCommand {
     @Override
     public LiteralArgumentBuilder<ClientSuggestionProvider> create(LiteralArgumentBuilder<ClientSuggestionProvider> main) {
         return main.executes(context -> {
+            var prevPos = CodeSpace.anchor;
             if (prevPos == null) return JustHelperCommand.feedback("<yellow>JustHelper >> Перемещений не было, вернуться некуда");
             CommandBuffer.add("tp " + prevPos.x + " " + prevPos.y + " " + prevPos.z);
+            CodeSpace.teleportAnchor();
             return 1;
         });
     }

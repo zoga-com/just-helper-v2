@@ -61,7 +61,7 @@ public class ItemEditorCommand extends JustHelperCommand {
         return main.then( tagBranch() )
                 .then( modifierBranch() )
                 .then( profileBranch() )
-                .then( JustHelperCommands.literal("display").executes(context -> itemResolver(item -> {
+                .then( Commands.literal("display").executes(context -> itemResolver(item -> {
                     Minecraft.getInstance().schedule(() ->
                             Minecraft.getInstance().setScreen( new ItemDisplayEditorScreen(item) )
                     );
@@ -113,7 +113,7 @@ public class ItemEditorCommand extends JustHelperCommand {
                 }))
                 .build();
 
-        return JustHelperCommands.literal("damage")
+        return Commands.literal("damage")
                 .executes(context -> itemResolver(item -> JustHelperCommand.feedback(
                         "<yellow>Текущая прочность: <white>{0}<br><yellow>Максимальная прочность: <white>{1}",
                         item.get(DataComponents.DAMAGE),
@@ -124,12 +124,12 @@ public class ItemEditorCommand extends JustHelperCommand {
     }
 
     private LiteralArgumentBuilder<ClientSuggestionProvider> modelBranch() {
-        return JustHelperCommands.literal("model")
+        return Commands.literal("model")
                 .executes(context -> itemResolver(item -> JustHelperCommand.feedback(
                         "<yellow>Установленная модель предмета: <white>{0}",
                         item.get(DataComponents.ITEM_MODEL)
                 )))
-                .then( JustHelperCommands.argument("id", IdentifierArgument.id()).executes(context -> itemResolver(item -> {
+                .then( Commands.argument("id", IdentifierArgument.id()).executes(context -> itemResolver(item -> {
                     var id = MojangUtils.getId(context, "id");
                     item.set(DataComponents.ITEM_MODEL, id);
                     return JustHelperCommand.feedback(1, "<green>Путь модели предмета изменен на: <white>{0}", id);
@@ -222,7 +222,7 @@ public class ItemEditorCommand extends JustHelperCommand {
                 }))
                 .build();
 
-        return JustHelperCommands.literal("tooltip")
+        return Commands.literal("tooltip")
                 .executes(context -> itemResolver(item -> {
                     var tooltip = item.get(DataComponents.TOOLTIP_DISPLAY);
                     if (tooltip == null) return JustHelperCommand.feedback("<yellow>Компонент скрытия подсказок не задан");
@@ -416,13 +416,13 @@ public class ItemEditorCommand extends JustHelperCommand {
                 })).build();
 
         var removeBranch = new LineCommand("remove")
-                .add(JustHelperCommands.literal("confirm"))
+                .add(Commands.literal("confirm"))
                 .run(context -> itemResolver(item -> {
                     item.set(DataComponents.EQUIPPABLE, null);
                     return JustHelperCommand.feedback(1, "<yellow>Компонент брони был удален");
                 })).build();
 
-        return JustHelperCommands.literal("equipment")
+        return Commands.literal("equipment")
                 .executes(context -> itemResolver(item -> {
                     var data = item.get(DataComponents.EQUIPPABLE);
                     if (data == null) return JustHelperCommand.feedback("<yellow>Компонент экипировки не установлен");
@@ -628,7 +628,7 @@ public class ItemEditorCommand extends JustHelperCommand {
                 }))
                 .build();
 
-        return JustHelperCommands.literal("modifier").then(add).then(remove).then(list);
+        return Commands.literal("modifier").then(add).then(remove).then(list);
     }
 
     private LiteralArgumentBuilder<ClientSuggestionProvider> tagBranch() {
@@ -709,7 +709,7 @@ public class ItemEditorCommand extends JustHelperCommand {
                 .build();
 
         var clear = new LineCommand("clear")
-                .add(JustHelperCommands.literal("confirm"))
+                .add(Commands.literal("confirm"))
                 .run(context -> itemResolver(item -> {
                     var tags = getBukkitTags(item);
                     var count = 0;
@@ -757,7 +757,7 @@ public class ItemEditorCommand extends JustHelperCommand {
                 }))
                 .build();
 
-        return JustHelperCommands.literal("tag").then(add).then(remove).then(list).then(clear).then(copy).then(paste);
+        return Commands.literal("tag").then(add).then(remove).then(list).then(clear).then(copy).then(paste);
     }
 
     private static int itemResolver(ItemStackProvider provider) {

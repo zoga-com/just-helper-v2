@@ -26,6 +26,10 @@ public class JustHelperUtils {
         return new File(getConfigFolder() + "/worlds/" + uuid);
     }
 
+    public static File getDescribesFile(String worldUUID) {
+        return new File(JustHelperUtils.getWorldFolder(worldUUID).getPath() + "/describes.json");
+    }
+
     public static void setItem(int slot, ItemStack item) {
         var player = Minecraft.getInstance().player;
         if (player == null) return;

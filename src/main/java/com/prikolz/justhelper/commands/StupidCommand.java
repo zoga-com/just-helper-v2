@@ -5,7 +5,6 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 
-import java.util.List;
 import java.util.Map;
 
 public class StupidCommand extends JustHelperCommand {
@@ -29,7 +28,7 @@ public class StupidCommand extends JustHelperCommand {
 
     @Override
     public LiteralArgumentBuilder<ClientSuggestionProvider> create(LiteralArgumentBuilder<ClientSuggestionProvider> main) {
-        return main.then(JustHelperCommands.argument("amount", StringArgumentType.greedyString()).executes(context -> {
+        return main.then(Commands.argument("amount", StringArgumentType.greedyString()).executes(context -> {
             var connection = Minecraft.getInstance().getConnection();
             if (connection == null) return 0;
             String result = StringArgumentType.getString(context, "amount").replaceAll("[^0-9]", "");

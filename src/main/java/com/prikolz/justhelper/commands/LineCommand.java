@@ -20,7 +20,7 @@ public class LineCommand {
     private BiFunction<CommandContext<ClientSuggestionProvider>, Throwable, Integer> onRunError = null;
 
     public LineCommand(String name) {
-        this.main = JustHelperCommands.literal(name);
+        this.main = Commands.literal(name);
         this.onRunError = (context, error) -> {
             JustHelperCommand.feedback("<red>При выполнении команды произошла ошибка: {0}\nПодробнее /justhelper logs", error.getMessage());
             JustHelperClient.LOGGER.printStackTrace(error);
@@ -47,9 +47,12 @@ public class LineCommand {
         return this;
     }
 
+    public LineCommand literal(String literal) {
+        return add(Commands.literal(literal));
+    }
+
     public LineCommand arg(String name, ArgumentType<?> arg) {
-        line.add(new Arg(JustHelperCommands.argument(name, arg)));
-        return this;
+        return add(Commands.argument(name, arg));
     }
 
     public LineCommand requires(Predicate<ClientSuggestionProvider> predicate) {

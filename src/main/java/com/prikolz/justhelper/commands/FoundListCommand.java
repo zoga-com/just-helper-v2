@@ -12,7 +12,7 @@ public class FoundListCommand extends JustHelperCommand {
     @Override
     public LiteralArgumentBuilder<ClientSuggestionProvider> create(LiteralArgumentBuilder<ClientSuggestionProvider> main) {
         return main.then(
-                JustHelperCommands.argument("page", IntegerArgumentType.integer(0))
+                Commands.argument("page", IntegerArgumentType.integer(0))
                         .executes(context -> {
                             FindCommand.execute(FindCommand.lastFound, IntegerArgumentType.getInteger(context, "page"));
                             return 1;

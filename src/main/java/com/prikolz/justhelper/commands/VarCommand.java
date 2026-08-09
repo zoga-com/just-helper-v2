@@ -2,9 +2,9 @@ package com.prikolz.justhelper.commands;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.prikolz.justhelper.CodeSpace;
+import com.prikolz.justhelper.codespace.CodeSpace;
 import com.prikolz.justhelper.commands.arguments.VariableHistoryArgumentType;
-import com.prikolz.justhelper.dev.values.Variable;
+import com.prikolz.justhelper.codespace.values.Variable;
 import com.prikolz.justhelper.util.JustHelperUtils;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 
@@ -22,7 +22,7 @@ public class VarCommand extends JustHelperCommand {
     @Override
     public LiteralArgumentBuilder<ClientSuggestionProvider> create(LiteralArgumentBuilder<ClientSuggestionProvider> main) {
         return main.then(
-                JustHelperCommands.argument(
+                Commands.argument(
                         "names",
                         new VariableHistoryArgumentType(type)
                 ).executes((context -> {

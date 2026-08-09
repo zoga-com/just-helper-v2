@@ -9,8 +9,11 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(Display.TextDisplay.class)
 public interface TextDisplayMixin {
     @Accessor("DATA_TEXT_ID")
-    static EntityDataAccessor<Component> getDataTextID() { throw new AssertionError(); }
+    static EntityDataAccessor<Component> DATA_TEXT_ID() { throw new AssertionError(); }
 
     @Accessor("DATA_BACKGROUND_COLOR_ID")
-    static EntityDataAccessor<Integer> getDataBGColorID() { throw new AssertionError(); }
+    static EntityDataAccessor<Integer> DATA_BACKGROUND_COLOR_ID() { throw new AssertionError(); }
+
+    @Accessor("DATA_STYLE_FLAGS_ID")
+    static EntityDataAccessor<Byte> DATA_STYLE_FLAGS_ID() { throw new AssertionError(); }
 }

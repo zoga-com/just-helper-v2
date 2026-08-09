@@ -2,8 +2,8 @@ package com.prikolz.justhelper.commands;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.prikolz.justhelper.CommandBuffer;
-import com.prikolz.justhelper.dev.BlockCodePos;
-import com.prikolz.justhelper.dev.SignInfo;
+import com.prikolz.justhelper.codespace.BlockCodePos;
+import com.prikolz.justhelper.codespace.SignInfo;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 import net.minecraft.world.phys.Vec3;

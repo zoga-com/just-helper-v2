@@ -1,7 +1,7 @@
 package com.prikolz.justhelper.mixin;
 
 import com.prikolz.justhelper.Config;
-import com.prikolz.justhelper.commands.JustHelperCommands;
+import com.prikolz.justhelper.commands.Commands;
 import com.prikolz.justhelper.gui.widgets.ChatCheckbox;
 import com.prikolz.justhelper.util.JustHelperUtils;
 import com.prikolz.justhelper.util.TextUtils;
@@ -63,7 +63,7 @@ public abstract class ChatScreenMixin<T extends ChatScreen> extends Screen {
         int limit = 256;
         var value = input.getValue();
         if (spacesCheckBox != null && spacesCheckBox.isFocused()) Minecraft.getInstance().schedule(() -> this.setFocused(input));
-        if ( JustHelperCommands.isJustHelperCommand(value) ) {
+        if ( Commands.isJustHelperCommand(value) ) {
             guiGraphics.fill(x1, y1, x2, y2,0xAA002255);
             limit = Integer.MAX_VALUE;
         } else {
@@ -86,7 +86,7 @@ public abstract class ChatScreenMixin<T extends ChatScreen> extends Screen {
     )
     private String normalizeCharMessage(String string) {
         var value = input.getValue();
-        if (JustHelperCommands.isJustHelperCommand(value)) return string;
+        if (Commands.isJustHelperCommand(value)) return string;
         return StringUtil.trimChatMessage(string);
     }
 

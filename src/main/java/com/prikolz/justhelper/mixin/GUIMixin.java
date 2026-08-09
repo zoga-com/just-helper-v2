@@ -1,6 +1,6 @@
 package com.prikolz.justhelper.mixin;
 
-import com.prikolz.justhelper.CodeSpace;
+import com.prikolz.justhelper.codespace.CodeSpace;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;

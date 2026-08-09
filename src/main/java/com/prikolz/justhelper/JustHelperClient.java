@@ -2,15 +2,17 @@ package com.prikolz.justhelper;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.prikolz.justhelper.commands.JustHelperCommands;
-import com.prikolz.justhelper.dev.values.DevValueRegistry;
+import com.prikolz.justhelper.commands.Commands;
+import com.prikolz.justhelper.codespace.values.DevValueRegistry;
 import com.prikolz.justhelper.util.TextUtils;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.Minecraft;
+import net.minecraft.server.packs.VanillaPackResources;
+import net.minecraft.server.packs.resources.ReloadableResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.time.LocalDate;
@@ -19,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.CompletableFuture;
 
 public class JustHelperClient implements ClientModInitializer {
 
@@ -33,7 +36,7 @@ public class JustHelperClient implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
-		JustHelperCommands.initialize();
+		Commands.initialize();
 		CONFIG = new Config();
 		CONFIG.readFile();
         DevValueRegistry.registerAll();
@@ -52,7 +55,8 @@ public class JustHelperClient implements ClientModInitializer {
         } catch (Exception e) {
             LOGGER.error("Mod version parse \"{}\" error: {}", versionName, e.getMessage());
         }
-		LOGGER.info("hello! Current mod version: {}", dateStr);
+
+		LOGGER.info("(JustHelper) hello, {}! Current mod version: {}", Minecraft.getInstance().getUser().getName(), dateStr);
 	}
 
     public static class JustHelperLogger extends OutputStream {
@@ -110,7 +114,7 @@ public class JustHelperClient implements ClientModInitializer {
         }
 
         @Override
-        public void write(int b) throws IOException {
+        public void write(int b) {
             outputBuffer.append((char) b);
         }
 

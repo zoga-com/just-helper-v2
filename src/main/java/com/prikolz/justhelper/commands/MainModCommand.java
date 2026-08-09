@@ -1,11 +1,15 @@
 package com.prikolz.justhelper.commands;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.prikolz.justhelper.JustHelperClient;
 import com.prikolz.justhelper.UpdateChecker;
+import com.prikolz.justhelper.commands.arguments.ReferenceArgumentType;
 import com.prikolz.justhelper.gui.ConfigScreen;
 import com.prikolz.justhelper.gui.LogsScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
+
+import java.util.HashMap;
 
 public class MainModCommand extends JustHelperCommand {
     public MainModCommand() {
@@ -15,19 +19,32 @@ public class MainModCommand extends JustHelperCommand {
 
     @Override
     public LiteralArgumentBuilder<ClientSuggestionProvider> create(LiteralArgumentBuilder<ClientSuggestionProvider> main) {
+        var configNode = new LineCommand("config")
+                .run(context -> executeConfig())
+                .literal("reload")
+                .run(context -> {
+                    var list = JustHelperClient.CONFIG.readFile();
+                    feedback("<green>[JustHelper]<white> Конфиг перезагружен. Ошибки: " + list.size());
+                    return feedback(list + "");
+                }).build();
+
+        var helpNode = new LineCommand("help")
+                .run(context -> executeHelp())
+                .arg("command", new ReferenceArgumentType<>( () -> {
+                    var map = new HashMap<String, JustHelperCommand>();
+                    for (var command : Commands.registerOrder) map.put(command.id, command);
+                    return map;
+                }))
+                .run(context -> {
+                    var command = ReferenceArgumentType.<JustHelperCommand>getReferences(context, "command").getFirst();
+                    printCommand(command, false);
+                    return 1;
+                }).build();
+
         return main
-                .then(
-                    JustHelperCommands.literal("config").executes(context -> executeConfig())
-                )
-                .then(
-                        JustHelperCommands.literal("help").executes(context -> executeHelp())
-                )
-                .then(
-                        JustHelperCommands.literal("logs").executes(context -> executeLogs())
-                )
-                .then(
-                        JustHelperCommands.literal("updates").executes(context -> executeUpdates())
-                )
+                .then(configNode).then(helpNode)
+                .then(Commands.literal("logs").executes(context -> executeLogs()))
+                .then(Commands.literal("updates").executes(context -> executeUpdates()))
                 .executes(context -> execute());
     }
 
@@ -55,12 +72,21 @@ public class MainModCommand extends JustHelperCommand {
         return 1;
     }
 
+    public void printCommand(JustHelperCommand command, boolean cut) {
+        final String pattern = "<yellow>●<white> /{1}<yellow> {2}";
+        JustHelperCommand.feedback(
+                "<hover:show_text:\"{0}\"><click:run_command:\"/justhelper help {3}\">{0}",
+                pattern,
+                command.name,
+                cut ? (command.description.length() > 100 ? command.description.substring(0, 100) + " <yellow>[...]</yellow>"
+                        : command.description) : command.description,
+                command.id
+        );
+    }
+
     public int executeHelp() {
         JustHelperCommand.feedback("\n<yellow>JustHelper <white>команды:\n");
-        final String pattern = "<yellow>●<white> /{1}<yellow> {2}";
-        for (var command : JustHelperCommands.registerOrder) {
-            JustHelperCommand.feedback("<hover:show_text:\"{0}\">{0}", pattern, command.name, command.description);
-        }
+        for (var command : Commands.registerOrder) printCommand(command, true);
         return 1;
     }
 

@@ -1,6 +1,6 @@
 package com.prikolz.justhelper.mixin;
 
-import com.prikolz.justhelper.CodeSpace;
+import com.prikolz.justhelper.codespace.CodeSpace;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Camera;
 import net.minecraft.client.renderer.LevelRenderer;

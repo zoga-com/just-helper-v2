@@ -8,6 +8,7 @@ import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 public class BuildPlayCommand extends JustHelperCommand {
     public BuildPlayCommand() {
         super("bp");
+        this.description = "<gray>- Отправляет на сервер 2 команды: /build и /play, для перезапуска мира.";
     }
 
     @Override

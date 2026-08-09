@@ -1,7 +1,7 @@
 package com.prikolz.justhelper.mixin;
 
 import com.prikolz.justhelper.Config;
-import com.prikolz.justhelper.dev.values.DevValue;
+import com.prikolz.justhelper.codespace.values.DevValue;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;

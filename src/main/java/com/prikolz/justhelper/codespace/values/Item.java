@@ -1,0 +1,68 @@
+package com.prikolz.justhelper.codespace.values;
+
+import com.prikolz.justhelper.util.JustHelperUtils;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
+
+public class Item extends DevValue {
+
+    public static final String type = "item";
+    public static final DevValueRegistry<Item> registry = DevValueRegistry.create(
+            Item.type,
+            nbt -> {
+                var item = nbt.getString("item").orElse(null);
+                if (item == null) return new Item("null");
+                try {
+                    return new Item(JustHelperUtils.gzipDecompress(item));
+                } catch (Throwable t) { throw new RuntimeException(t.getMessage()); }
+            },
+            (value, nbt) -> {
+                throw new RuntimeException("FIX IT");
+            }
+    );
+
+    public String item;
+    public String id;
+
+    public Item(String item) {
+        super(Item.type, null, "Предмет({id})");
+        this.item = item;
+        var id = new StringBuilder();
+        int[] subsequence = new int[]{ 105, 100, 0 };
+        int value = 0;
+        ReadMode mode = ReadMode.HEAD;
+        for (char c : item.toCharArray()) {
+            switch (mode) {
+                case HEAD -> {
+                    if ((int) c == subsequence[value]) {
+                        value++;
+                        if (value >= subsequence.length) mode = ReadMode.LENGTH;
+                    } else {
+                        value = 0;
+                    }
+                }
+                case LENGTH -> {
+                    value = c;
+                    mode = ReadMode.ID;
+                }
+                case ID -> {
+                    if (value <= 0) break;
+                    id.append(c);
+                    value--;
+                }
+            }
+        }
+        this.id = id.toString();
+        var identifier = Identifier.parse(this.id);
+        material = BuiltInRegistries.ITEM.getValue(identifier);
+    }
+
+    @Override
+    public String miniBuilder() {
+        return id;
+    }
+
+    private enum ReadMode {
+        HEAD, LENGTH, ID
+    }
+}

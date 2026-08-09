@@ -1,9 +1,8 @@
 package com.prikolz.justhelper.mixin;
 
 import com.prikolz.justhelper.CommandBuffer;
-import com.prikolz.justhelper.CodeSpace;
+import com.prikolz.justhelper.codespace.CodeSpace;
 import com.prikolz.justhelper.JustHelperClient;
-import com.prikolz.justhelper.util.JustHelperUtils;
 import com.prikolz.justhelper.util.Scheduler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -17,6 +16,7 @@ public class MinecraftMixin {
 
     @Inject(method = "tick", at = @At("TAIL"))
     public void onTick(CallbackInfo ci) {
+        if (CodeSpace.isActive()) CodeSpace.tick();
         CommandBuffer.tick(50);
         Scheduler.tick();
     }
@@ -24,7 +24,7 @@ public class MinecraftMixin {
     @Inject(method = "setLevel", at = @At("TAIL"))
     public void onSetLevel(ClientLevel clientLevel, CallbackInfo ci) {
         try {
-            CodeSpace.initialize();
+            CodeSpace.initialize(clientLevel);
         } catch (Throwable t) {
             JustHelperClient.LOGGER.error("Develop world initialization error: {}", t.getMessage());
         }

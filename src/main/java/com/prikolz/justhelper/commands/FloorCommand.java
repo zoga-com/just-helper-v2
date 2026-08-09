@@ -3,7 +3,7 @@ package com.prikolz.justhelper.commands;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.prikolz.justhelper.CommandBuffer;
 import com.prikolz.justhelper.commands.arguments.FloorArgumentType;
-import com.prikolz.justhelper.dev.BlockCodePos;
+import com.prikolz.justhelper.codespace.BlockCodePos;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 
@@ -16,7 +16,7 @@ public class FloorCommand extends JustHelperCommand {
     @Override
     public LiteralArgumentBuilder<ClientSuggestionProvider> create(LiteralArgumentBuilder<ClientSuggestionProvider> main) {
         return main.then(
-                JustHelperCommands.argument("floor", new FloorArgumentType()).executes( context -> {
+                Commands.argument("floor", new FloorArgumentType()).executes(context -> {
                     int floor = FloorArgumentType.getFloor(context, "floor");
                     return execute(floor);
                 })

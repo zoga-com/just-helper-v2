@@ -2,9 +2,11 @@ package com.prikolz.justhelper.commands;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.prikolz.justhelper.Config;
-import com.prikolz.justhelper.CodeSpace;
-import com.prikolz.justhelper.commands.arguments.SignsSearchingArgumentType;
-import com.prikolz.justhelper.dev.BlockCodePos;
+import com.prikolz.justhelper.codespace.CodeSpace;
+import com.prikolz.justhelper.commands.arguments.searching.FoundSignInfo;
+import com.prikolz.justhelper.commands.arguments.searching.InfoPack;
+import com.prikolz.justhelper.commands.arguments.searching.SignsSearchingArgumentType;
+import com.prikolz.justhelper.codespace.BlockCodePos;
 import com.prikolz.justhelper.util.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
@@ -27,18 +29,48 @@ public class FindCommand extends JustHelperCommand {
         return result;
     }
 
-    public static SignsSearchingArgumentType.InfoPack lastFound = new SignsSearchingArgumentType.InfoPack(List.of());
+    public static InfoPack lastFound = new InfoPack(List.of());
     public static String lastPrompt = ":3";
 
     public FindCommand() {
         super("find");
-        this.description = "[Параметры поиска] <gray>- Поиск блоков кода по содержанию табличек. Отображает все совпадения в чате. Пример использования: /find событие. Используйте в начале параметров '!', чтобы включить расширенный поиск.";
+        this.description = """
+                [Параметры поиска] <gray>- Поиск блоков кода по содержанию табличек.\
+                Отображает все совпадения в чате.
+                Пример использования: <white>/find событие<gray>
+                Используйте в начале <white>=[</white>, чтобы включить расширенный поиск.
+                Например: <white>/find =[floor=5]функция</white> - команда \
+                будет искать все функции расположенные на 5 этаже. \
+                Чтобы инвертировать параметр добавьте <white>!</white> перед операндом.
+                Например: <white>/find =[text1!="событие", floor!\\<10]</white> - команда будет искать все \
+                блоки кода, которые НЕ имеют текст "событие" на первой строчке и находятся НЕ ниже 10 этажа.
+                <white>Параметры поиска:<gray>
+                - floor, line, distance - Числовые фильтры для поиска. \
+                Поддерживают операнды: =, <, >. Принимают одно или несколько чисел. floor - условие на проверку этажа, \
+                line - условие на проверку строчки кода, distance - условие на проверку расстояния до блока кода.
+                Например:
+                  <white>/find =[floor=[10, 11, 5]]</white> - условие, этаж должен быть 10, 11 или 5.
+                  <white>/find =[line>10]</white> - условие, строчка должна быть больше 10
+                  <white>/find =[distance<40.5]</white> - условие, расстояние до блока должно быть меньше 40.5
+                - text1, text2, text3, text4 - Текстовые фильтры для поиска. \
+                Поддерживают операнды: =, <, >. Проверяет текст на указанной линии таблички. = - полное соответствие, \
+                < - указанный текст содержится на линии таблички, > - текст линии таблички содержится в указанном тексте.
+                Например:
+                  <white>/find =[text1=событие игрока]</white> - ищет события игрока.
+                  <white>/find =[text1<"событие"]</white> - ищет любое событие.
+                  <white>/find =[text1>событие игрока функция процесс]</white> - ищет любое событие игрока, функцию или процесс.
+                  <white>/find =[text1<событие, text1!<"игрока"]</white> - ищет любое событие, кроме событий игрока.
+                - nearby - Сортировка по расстоянию. По умолчанию уже включена, поэтому не обязательно указывать, \
+                но можно инвертировать, тогда в начале будут самые дальние блоки кода.
+                Например:
+                  <white>/find =[text1="функция", nearby!]</white> - ищет сначала самые дальние функции.
+                """;
     }
 
     @Override
     public LiteralArgumentBuilder<ClientSuggestionProvider> create(LiteralArgumentBuilder<ClientSuggestionProvider> main) {
         return main.then(
-                JustHelperCommands.argument(
+                Commands.argument(
                         "text", new SignsSearchingArgumentType()
                 ).executes((context -> {
                     var found = SignsSearchingArgumentType.getFound(context, "text");
@@ -49,7 +81,7 @@ public class FindCommand extends JustHelperCommand {
         );
     }
 
-    public static void execute(SignsSearchingArgumentType.InfoPack found, int page) {
+    public static void execute(InfoPack found, int page) {
         var level = Minecraft.getInstance().level;
         if (level == null) return;
         lastFound = found;
@@ -103,21 +135,21 @@ public class FindCommand extends JustHelperCommand {
         JustHelperCommand.feedback(controllerBuilder.toString());
     }
 
-    public static Component createSignMessage(SignsSearchingArgumentType.FoundSignInfo info) {
+    public static Component createSignMessage(FoundSignInfo info) {
         var sign = info.sign();
         var pos = sign.codePos;
         var lastPrompt = SignsSearchingArgumentType.lastInput;
         String miniLine = toMini("<white>" + pos.line );
         if (pos.line < 10) miniLine = miniLine + " ";
         String clickCommand = "/tp " + (0.5 + pos.blockPos.getX()) + " " + pos.blockPos.getY() + " " + (2.5 + pos.blockPos.getZ());
-        String signMainLine = "<gold>● <white>" + info.lines()[0].replaceAll(lastPrompt, "<yellow>" + lastPrompt + "<white>");
+        String signMainLine = "<gold>● <white>" + info.lines()[0].replace(lastPrompt, "<yellow>" + lastPrompt + "<white>");
         if (info.mainLine() != 0) {
-            signMainLine = "<gold>● <gray>" + info.lines()[0] + "<gold>/<white>" + info.lines()[info.mainLine()].replaceAll(lastPrompt, "<yellow>" + lastPrompt + "<white>");
+            signMainLine = "<gold>● <gray>" + info.lines()[0] + "<gold>/<white>" + info.lines()[info.mainLine()].replace(lastPrompt, "<yellow>" + lastPrompt + "<white>");
         }
         String hoverText = info.createHoverInfo(lastPrompt);
         String floor = "" + pos.floor;
-        var describe = CodeSpace.describes.describes.get(pos.floor);
-        if (describe != null) floor = "(" + describe + "<yellow>)";
+        var describe = CodeSpace.getFloorDescribe(pos.floor, true);
+        if (describe != null) floor = "(" + describe.minimessage + "<yellow>)";
         var result = TextUtils.minimessage(
                 " {5} <click:run_command:'{3}'><hover:show_text:'{4}'><yellow>{0}{1} {2}",
                 floor,

@@ -45,27 +45,14 @@ public class Config extends ConfigObject {
 
     public LongParameter commandBufferCD = longParameter("command_sending_cooldown", 900L, 0L, 10000L);
 
-    public BooleanParameter teleportAnchor = boolParameter("enable_teleport_anchor", true);
+    public ObjectParameter<TeleportAnchorParameters> teleportAnchor =
+            objectParameter("teleport_anchor", TeleportAnchorParameters::new);
 
     public BooleanParameter findEach = boolParameter("enable_each_find_list", true);
 
     public BooleanParameter updateChecker = boolParameter("enable_update_checker", true);
 
-    public Parameter<ValueFormats, JsonObject> valueFormats = new Parameter<>(
-            defaultValueFormats(),
-            "value_string_formats",
-            parameters,
-            (value, logger) -> {
-                var result = new JsonObject();
-                value.formats().forEach((k, v) -> result.add(k, new JsonPrimitive(v)));
-                return result;
-            },
-            (json, logger) -> {
-                var map = new HashMap<String, String>();
-                for (String key : json.keySet()) map.put(key, json.getAsJsonPrimitive(key).getAsString());
-                return new ValueFormats(map);
-            }
-    );
+    public BooleanParameter autoWorldLimitBar = boolParameter("auto_world_limit_bar", false);
 
     public ObjectParameter<CommandParameters> commandParameters = objectParameter("commands", CommandParameters::new);
 
@@ -174,12 +161,6 @@ public class Config extends ConfigObject {
         result.add(Blocks.DARK_PRISMARINE, "<dark_purple>Контроллер");
 
         return result;
-    }
-
-    private static ValueFormats defaultValueFormats() {
-        var map = new HashMap<String, String>();
-
-        return new ValueFormats(map);
     }
 
     public static class Parameter<T, A extends JsonElement> {

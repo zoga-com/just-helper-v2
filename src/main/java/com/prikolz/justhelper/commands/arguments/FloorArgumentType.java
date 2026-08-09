@@ -8,7 +8,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import com.prikolz.justhelper.CodeSpace;
+import com.prikolz.justhelper.codespace.CodeSpace;
 import com.prikolz.justhelper.util.TextUtils;
 import net.minecraft.network.chat.Component;
 
@@ -27,17 +27,9 @@ public class FloorArgumentType implements ArgumentType<Integer> {
         if (!CodeSpace.isActive()) throw MUST_BE_IN_DEV.create("");
         String name = parser.parse(reader);
         input = name;
-        try {
-            int floor = Integer.parseInt(name);
-            if (floor < 1) throw FLOOR_NOT_FOUND.create(floor);
-            return floor;
-        } catch (Throwable ignore) {}
-        var describes = CodeSpace.describes.plainDescribes;
-        for (int floor : describes.keySet()) {
-            var describe = describes.get(floor);
-            if (describe.toLowerCase().contains(name.toLowerCase())) return floor;
-        }
-        throw FLOOR_NOT_FOUND.create(name);
+        var floor = CodeSpace.getFloor(name);
+        if (floor == -1) throw FLOOR_NOT_FOUND.create(name);
+        return floor;
     }
 
     public static <S> int getFloor(CommandContext<S> context, String argument) {
@@ -48,14 +40,12 @@ public class FloorArgumentType implements ArgumentType<Integer> {
     @Override
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
         if (CodeSpace.isActive()) {
-            var describes = CodeSpace.describes.plainDescribes;
             if (input.isEmpty()) {
-                describes.values().forEach(builder::suggest);
+                CodeSpace.getFloorDescribes().forEach(it -> builder.suggest(it.plain));
                 return builder.buildFuture();
             }
-            describes.values().forEach(value -> {
-                if (value.contains(input)) builder.suggest(value);
-            });
+            for (var describe : CodeSpace.getFloorDescribes())
+                if (describe.plain.toLowerCase().contains(input.toLowerCase())) builder.suggest(describe.plain);
         }
         return builder.buildFuture();
     }

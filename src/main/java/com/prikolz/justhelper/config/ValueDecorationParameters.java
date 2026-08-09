@@ -2,8 +2,8 @@ package com.prikolz.justhelper.config;
 
 import com.google.gson.JsonPrimitive;
 import com.prikolz.justhelper.Config;
-import com.prikolz.justhelper.dev.values.Text;
-import com.prikolz.justhelper.dev.values.Variable;
+import com.prikolz.justhelper.codespace.values.Text;
+import com.prikolz.justhelper.codespace.values.Variable;
 import net.kyori.adventure.text.format.NamedTextColor;
 
 public class ValueDecorationParameters extends ConfigObject {

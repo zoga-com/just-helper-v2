@@ -1,5 +1,6 @@
 package com.prikolz.justhelper.config;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
@@ -89,6 +90,14 @@ public class ConfigObject {
         return new JsonParameter(def, name, parameters, (value, logger) -> value, (json, logger) -> json);
     }
 
+    public StringListParameter stringListParameter(String name, List<String> def) {
+        return new StringListParameter(def, name, parameters, (value, logger) -> {
+            var list = new JsonArray(value.size());
+            for (var str : value) list.add(str);
+            return list;
+        }, (child, logger) -> child.asList().stream().map(JsonElement::getAsString).toList());
+    }
+
     public final <T, D extends JsonElement> Config.Parameter<T, D> parameter(
             String key,
             T def,
@@ -138,6 +147,12 @@ public class ConfigObject {
 
     public static class JsonParameter extends Config.Parameter<JsonObject, JsonObject> {
         public JsonParameter(JsonObject defaultValue, String jsonKey, List<Config.Parameter<?, ?>> parameters, JsonResolver<JsonObject, JsonObject> jsonResolver, ParameterResolver<JsonObject, JsonObject> resolver) {
+            super(defaultValue, jsonKey, parameters, jsonResolver, resolver);
+        }
+    }
+
+    public static class StringListParameter extends Config.Parameter<List<String>, JsonArray> {
+        public StringListParameter(List<String> defaultValue, String jsonKey, List<Config.Parameter<?, ?>> parameters, JsonResolver<List<String>, JsonArray> jsonResolver, ParameterResolver<List<String>, JsonArray> resolver) {
             super(defaultValue, jsonKey, parameters, jsonResolver, resolver);
         }
     }

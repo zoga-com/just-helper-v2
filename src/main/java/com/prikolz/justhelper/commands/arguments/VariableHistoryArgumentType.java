@@ -7,8 +7,8 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import com.prikolz.justhelper.CodeSpace;
-import com.prikolz.justhelper.dev.values.Variable;
+import com.prikolz.justhelper.codespace.CodeSpace;
+import com.prikolz.justhelper.codespace.values.Variable;
 
 import java.util.concurrent.CompletableFuture;
 

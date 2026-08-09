@@ -1,8 +1,7 @@
 package com.prikolz.justhelper.commands;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.prikolz.justhelper.CommandBuffer;
-import com.prikolz.justhelper.dev.values.Number;
+import com.prikolz.justhelper.codespace.values.Number;
 import com.prikolz.justhelper.util.JustHelperUtils;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 

@@ -2,8 +2,8 @@ package com.prikolz.justhelper.commands;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.prikolz.justhelper.dev.values.Number;
-import com.prikolz.justhelper.dev.values.Text;
+import com.prikolz.justhelper.codespace.values.Number;
+import com.prikolz.justhelper.codespace.values.Text;
 import com.prikolz.justhelper.util.JustHelperUtils;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 
@@ -27,7 +27,7 @@ public class ValueCommand extends JustHelperCommand {
     @Override
     public LiteralArgumentBuilder<ClientSuggestionProvider> create(LiteralArgumentBuilder<ClientSuggestionProvider> main) {
         return main.then(
-                JustHelperCommands.argument("arg", StringArgumentType.greedyString()).executes(context -> {
+                Commands.argument("arg", StringArgumentType.greedyString()).executes(context -> {
                     var arg = context.getArgument("arg", String.class);
                     final String[] args;
                     if (allowBrackets) {
