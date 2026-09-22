@@ -8,7 +8,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import org.joml.Vector3f;
 
 public class FloorDescribe {
@@ -38,7 +38,7 @@ public class FloorDescribe {
     public void spawn(ClientLevel level) {
         if (level == null) return;
         if (entity != null) removeEntity();
-        entity = new Display.TextDisplay(EntityType.TEXT_DISPLAY, level);
+        entity = new Display.TextDisplay(EntityTypes.TEXT_DISPLAY, level);
         entity.getEntityData().set(TextDisplayMixin.DATA_TEXT_ID(), component, true);
         entity.getEntityData().set(TextDisplayMixin.DATA_BACKGROUND_COLOR_ID(), 0xFF5B5959, true);
         entity.getEntityData().set(DisplayMixin.DATA_SCALE_ID(), new Vector3f(10), true);

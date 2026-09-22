@@ -1,9 +1,8 @@
 package com.prikolz.justhelper.mixin;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.MultiLineEditBox;
 import net.minecraft.client.gui.components.MultilineTextField;
-import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.MouseButtonEvent;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -24,9 +23,6 @@ public interface MultiLineEditBoxMixin {
     @Invoker("onDrag")
     void onDrag(MouseButtonEvent mouseButtonEvent, double d, double e);
 
-    @Invoker("renderContents")
-    void onRenderContents(GuiGraphics guiGraphics, int i, int j, float f);
-
-    @Invoker("scrollRate")
-    double scrollRate();
+    @Invoker("extractContents")
+    void onRenderContents(GuiGraphicsExtractor guiGraphics, int i, int j, float f);
 }

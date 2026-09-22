@@ -63,12 +63,12 @@ public class MainModCommand extends JustHelperCommand {
     }
 
     public static int executeConfig() {
-        Minecraft.getInstance().schedule(() -> Minecraft.getInstance().setScreen( ConfigScreen.create() ));
+        Minecraft.getInstance().schedule(() -> Minecraft.getInstance().gui.setScreen( ConfigScreen.create() ));
         return 1;
     }
 
     public static int executeLogs() {
-        Minecraft.getInstance().schedule(() -> Minecraft.getInstance().setScreen(new LogsScreen()));
+        Minecraft.getInstance().schedule(() -> Minecraft.getInstance().gui.setScreen(new LogsScreen()));
         return 1;
     }
 

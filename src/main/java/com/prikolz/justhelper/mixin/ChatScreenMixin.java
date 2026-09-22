@@ -6,7 +6,7 @@ import com.prikolz.justhelper.gui.widgets.ChatCheckbox;
 import com.prikolz.justhelper.util.JustHelperUtils;
 import com.prikolz.justhelper.util.TextUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.ChatScreen;
@@ -35,7 +35,9 @@ public abstract class ChatScreenMixin<T extends ChatScreen> extends Screen {
     @Unique
     private boolean chatPatchesIsLoaded = false;
 
-    protected ChatScreenMixin(Component component) { super(component); }
+    protected ChatScreenMixin(Component component) {
+        super(component);
+    }
 
     @Inject(
             method = "init",
@@ -50,32 +52,32 @@ public abstract class ChatScreenMixin<T extends ChatScreen> extends Screen {
                 allowDoubleSpaces,
                 (w, v) -> allowDoubleSpaces = v
         );
-        spacesCheckBox.setTooltip( Tooltip.create(Component.literal("Включить/Выключить\nдвойные пробелы в чате")) );
+        spacesCheckBox.setTooltip(Tooltip.create(Component.literal("Включить/Выключить\nдвойные пробелы в чате")));
         this.addRenderableWidget(spacesCheckBox);
         chatPatchesIsLoaded = JustHelperUtils.isClassLoaded("obro1961.chatpatches.ChatPatches");
     }
 
-    @Redirect(
-            method = "render",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;fill(IIIII)V")
+    @Inject(
+            method = "extractRenderState",
+            at = @At("TAIL")
     )
-    private void render(GuiGraphics guiGraphics, int x1, int y1, int x2, int y2, int color) {
+    private void render(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
         int limit = 256;
         var value = input.getValue();
-        if (spacesCheckBox != null && spacesCheckBox.isFocused()) Minecraft.getInstance().schedule(() -> this.setFocused(input));
-        if ( Commands.isJustHelperCommand(value) ) {
-            guiGraphics.fill(x1, y1, x2, y2,0xAA002255);
+        if (spacesCheckBox != null && spacesCheckBox.isFocused()) {
+            Minecraft.getInstance().schedule(() -> this.setFocused(input));
+        }
+        if (Commands.isJustHelperCommand(value)) {
+            guiGraphics.fill(input.getX(), input.getY(), input.getX() + input.getWidth(), input.getY() + input.getHeight(), 0xAA002255);
             limit = Integer.MAX_VALUE;
-        } else {
-            guiGraphics.fill(x1, y1, x2, y2, color);
         }
         input.setMaxLength(limit);
         if (!Config.get().chatParameters.value.showLineLimit.value) return;
-        guiGraphics.drawString(
+        guiGraphics.text(
                 Minecraft.getInstance().font,
                 value.length() + "/" + limit,
-                chatPatchesIsLoaded ? (int) (width * 0.32) : x1 + 2,
-                y1 - 10,
+                chatPatchesIsLoaded ? (int) (width * 0.32) : input.getX() + 2,
+                input.getY() - 10,
                 0xffAAAAAA
         );
     }

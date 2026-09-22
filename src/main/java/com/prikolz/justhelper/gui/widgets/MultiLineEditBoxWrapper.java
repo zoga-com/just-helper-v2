@@ -2,7 +2,7 @@ package com.prikolz.justhelper.gui.widgets;
 
 import com.prikolz.justhelper.mixin.MultiLineEditBoxMixin;
 import net.minecraft.client.gui.ComponentPath;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractTextAreaWidget;
 import net.minecraft.client.gui.components.MultiLineEditBox;
 import net.minecraft.client.gui.narration.NarratableEntry;
@@ -26,6 +26,7 @@ public class MultiLineEditBoxWrapper extends AbstractTextAreaWidget {
                 hold.getWidth(),
                 hold.getHeight(),
                 hold.getMessage(),
+                defaultSettings(1),
                 showBackground,
                 showDecorations
         );
@@ -43,18 +44,13 @@ public class MultiLineEditBoxWrapper extends AbstractTextAreaWidget {
     }
 
     @Override
-    protected void renderContents(GuiGraphics guiGraphics, int i, int j, float f) {
+    protected void extractContents(GuiGraphicsExtractor guiGraphics, int i, int j, float f) {
         ((MultiLineEditBoxMixin) hold).onRenderContents(guiGraphics, i, j, f);
     }
 
     @Override
-    public void renderWidget(GuiGraphics guiGraphics, int i, int j, float f) {
-        hold.render(guiGraphics, i, j, f);
-    }
-
-    @Override
-    protected double scrollRate() {
-        return ((MultiLineEditBoxMixin) hold).scrollRate();
+    public void extractWidgetRenderState(GuiGraphicsExtractor guiGraphics, int i, int j, float f) {
+        ((MultiLineEditBoxMixin) hold).onRenderContents(guiGraphics, i, j, f);
     }
 
     @Override
