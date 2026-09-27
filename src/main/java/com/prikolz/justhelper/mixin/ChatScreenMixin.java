@@ -1,5 +1,6 @@
 package com.prikolz.justhelper.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.prikolz.justhelper.Config;
 import com.prikolz.justhelper.commands.Commands;
 import com.prikolz.justhelper.gui.widgets.ChatCheckbox;
@@ -68,7 +69,6 @@ public abstract class ChatScreenMixin<T extends ChatScreen> extends Screen {
             Minecraft.getInstance().schedule(() -> this.setFocused(input));
         }
         if (Commands.isJustHelperCommand(value)) {
-            guiGraphics.fill(input.getX(), input.getY(), input.getX() + input.getWidth(), input.getY() + input.getHeight(), 0xAA002255);
             limit = Integer.MAX_VALUE;
         }
         input.setMaxLength(limit);
@@ -77,7 +77,7 @@ public abstract class ChatScreenMixin<T extends ChatScreen> extends Screen {
                 Minecraft.getInstance().font,
                 value.length() + "/" + limit,
                 chatPatchesIsLoaded ? (int) (width * 0.32) : input.getX() + 2,
-                input.getY() - 10,
+                input.getY() - 16,
                 0xffAAAAAA
         );
     }
@@ -98,5 +98,14 @@ public abstract class ChatScreenMixin<T extends ChatScreen> extends Screen {
     )
     private String normalizeSpace(String actualChar) {
         return allowDoubleSpaces ? actualChar : StringUtils.normalizeSpace(actualChar);
+    }
+
+    @ModifyExpressionValue(method = "extractRenderState", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Options;getBackgroundColor(I)I"))
+    private int changeChatInputBackground(int color) {
+        if(Commands.isJustHelperCommand(input.getValue())) {
+            return 0xAA002255;
+        } else {
+            return color;
+        }
     }
 }
