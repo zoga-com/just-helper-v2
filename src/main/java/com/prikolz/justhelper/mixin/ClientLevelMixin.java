@@ -26,13 +26,4 @@ public abstract class ClientLevelMixin {
     private void onBlockEntityAdded(BlockEntity blockEntity, CallbackInfo ci) {
         CodeSpace.addSign(blockEntity);
     }
-//
-//    /**
-//     * @author Zoga_com
-//     * @reason РАЗРАБОТЧИКИ МАЙНКРАФТ НАСРАЛИ
-//     */
-//    @Overwrite
-//    public void addEntity(Entity entity) {
-//        this.entityStorage.addEntity(entity);
-//    }
 }
