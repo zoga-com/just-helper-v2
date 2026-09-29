@@ -11,12 +11,15 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityTypes;
 import org.joml.Vector3f;
 
+import java.util.Random;
+
 public class FloorDescribe {
     public final int floor;
     public String minimessage;
     public String plain;
     public Component component;
     public Display.TextDisplay entity = null;
+    private static final Random random = new Random();
 
     public static FloorDescribe empty(int floor) { return new FloorDescribe(floor, floor + " этаж"); }
 
@@ -45,6 +48,7 @@ public class FloorDescribe {
         BlockPos pos = new BlockPos(-1, 4 + (7 * (floor - 1)), 47);
         entity.setPos(pos.getX() + 0.5, pos.getY() - 1, pos.getZ() + 0.5);
         entity.setYRot(90);
+        entity.setId(1_000_000 + random.nextInt(5000, 100000));
 
         level.addEntity(entity);
     }

@@ -1,6 +1,5 @@
 package com.prikolz.justhelper.gui.widgets;
 
-import com.prikolz.justhelper.mixin.MultiLineEditBoxMixin;
 import net.minecraft.client.gui.ComponentPath;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractTextAreaWidget;
@@ -45,12 +44,12 @@ public class MultiLineEditBoxWrapper extends AbstractTextAreaWidget {
 
     @Override
     protected void extractContents(GuiGraphicsExtractor guiGraphics, int i, int j, float f) {
-        ((MultiLineEditBoxMixin) hold).onRenderContents(guiGraphics, i, j, f);
+        hold.extractRenderState(guiGraphics, i, j, f);
     }
 
     @Override
     public void extractWidgetRenderState(GuiGraphicsExtractor guiGraphics, int i, int j, float f) {
-        ((MultiLineEditBoxMixin) hold).onRenderContents(guiGraphics, i, j, f);
+        hold.extractRenderState(guiGraphics, i, j, f);
     }
 
     @Override

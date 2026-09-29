@@ -143,7 +143,7 @@ public class ConfigScreen extends Screen {
 
         @Override
         protected void extractWidgetRenderState(GuiGraphicsExtractor guiGraphics, int i, int j, float f) {
-            ((MultiLineEditBoxMixin) box).onRenderContents(guiGraphics, i, j, f);
+            box.extractRenderState(guiGraphics, i, j, f);
             if (error.error) {
                 var lineCount = ((MultiLineEditBoxMixin) box).getTextField().getLineCount();
                 var pos = ((double) error.line / lineCount) * (box.maxScrollAmount() + box.getHeight() - 4);
